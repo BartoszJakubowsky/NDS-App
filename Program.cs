@@ -11,26 +11,28 @@ using System.ComponentModel;
 // - zapisanie ustawień danego pliku
 // - wybór pliku lub wpisanie jego patternu
 // - co z nim zrobić -> usunąć, przenieść, przekopiować?
+//  
 // - czy zmienić nazwę? Jak ją zmienić? (ustawić domyślnie jak katalogu)
 
 
 //co zrobione
 //
-// wybór mennu z konsoli
+// + dodana metoda tworząca z obiektu settings plik json - validacja na starcie czy taki plik się znajduje
+// + menu wuboru na starcie programu
+
 
 
 class Program
 {
     static void Main(string[] args)
     {
-        SettingsInit();
-        MainProgram();
-
+        Settings settings = new Settings();
+        MainProgram(settings.SettingsInit());
 
 
     }
 
-    public static void MainProgram()
+    public static void MainProgram(Settings settings)
     {
         //          //
         //   MENU   //
@@ -51,22 +53,23 @@ class Program
                 break;
             case 3:
                 break;
+
+            //          //
+            // Settings //
+            //          //
             case 4:
-        
-                SettingsInit();
+
                 MainProgram();
                 break;
+            //          //
+            //   Exit   //
+            //          //
             case 5:
                 CloseApp();
-                MainProgram();
                 break;
         }
 
-        MainProgram();
-
-
-
-
+        MainProgram(settings);
 
 
 
@@ -133,69 +136,6 @@ class Program
         Console.WriteLine();
         return pressedNumber;
     }
-    public static object SettingsInit()
-    {
-
-        // get current directory
-        //string currentDir = Directory.GetCurrentDirectory();
-        string currentDir = @"C:\Users\barto\OneDrive\Pan_Programista\C#\# Projekty\Projekt NDS v2\NDS App v2";
-
-        //
-        // create search pattern for settings jsons files
-        Regex regex = new Regex("settings_[1-9]\\.json", RegexOptions.IgnoreCase);
-
-        //
-        // create list for settings files
-        List<string> settingsList = new List<string>();
-
-
-        foreach (string file in Directory.GetFiles(currentDir))
-        {
-            if (regex.IsMatch(file))
-            {
-                settingsList.Add(file);
-            }
-        }
-        if (settingsList.ToArray().Length > 0)
-        {
-            foreach (string json in settingsList.ToArray())
-            {
-                //download string from current directory
-                string jsonFileSerialized = File.ReadAllText(json);
-                Settings settings = JsonConvert.DeserializeObject<Settings>(jsonFileSerialized);
-
-                if (settings.DefaultSettings == "true")
-                {
-                    string fileName = Path.Combine("", Path.GetFileName(json));
-                    Console.WriteLine($"Settings loaded from {fileName}\n\n\n");
-                    return settings;
-                }
-
-
-
-
-            }
-            //actually this code shoudn't be ever executed
-            Console.WriteLine();
-            return "file not found" ;
-        }
-        else
-        {
-            Settings settings = new Settings()
-            {
-                DefaultSettings = "true",
-                MufaPattern = "default",
-                AndSomethingElse = "default"
-            };
-
-            //create and send string to current dir
-            string jsonFile = JsonConvert.SerializeObject(settings);
-            File.WriteAllText($@"{currentDir}\settings_1.json", jsonFile);
-
-            return settings;
-        }
-
-    }
     public static void CloseApp()
     {
         //napisać kod, który sprawdza czy wszystko jest cacy
@@ -215,11 +155,11 @@ class Program
 
             if (key.Key == ConsoleKey.Y)
             {
-                     pressedYesNo = 'Y';
-                    _val += key.KeyChar;
-                    Console.Write(key.KeyChar);
+                pressedYesNo = 'Y';
+                _val += key.KeyChar;
+                Console.Write(key.KeyChar);
             }
-            else if(key.Key == ConsoleKey.N)
+            else if (key.Key == ConsoleKey.N)
             {
                 pressedYesNo = 'N';
                 _val += key.KeyChar;
@@ -257,4 +197,74 @@ class Program
 
     }
 
+
+
+
 }
+/*
+public static object SettingsInit()
+{
+
+    // get current directory
+    //string currentDir = Directory.GetCurrentDirectory();
+    string currentDir = @"C:\Users\Nowe Jakubki\OneDrive\Pan_Programista\C#\# Projekty\Projekt NDS v2 - PC\NDS-App-v2";
+
+    //
+    // create search pattern for settings jsons files
+    Regex regex = new Regex("settings_[1-9]\\.json", RegexOptions.IgnoreCase);
+
+    //
+    // create list for settings files
+    List<string> settingsList = new List<string>();
+
+
+    foreach (string file in Directory.GetFiles(currentDir))
+    {
+        if (regex.IsMatch(file))
+        {
+            settingsList.Add(file);
+        }
+    }
+    if (settingsList.ToArray().Length > 0)
+    {
+        foreach (string json in settingsList.ToArray())
+        {
+            //download string from current directory
+            string jsonFileSerialized = File.ReadAllText(json);
+            Settings settings = JsonConvert.DeserializeObject<Settings>(jsonFileSerialized);
+
+            if (settings.DefaultSettings == "true")
+            {
+                string fileName = Path.Combine("", Path.GetFileName(json));
+                Console.WriteLine($"Settings loaded from {fileName}\n\n\n");
+                return settings;
+            }
+
+
+
+
+        }
+        //actually this code shoudn't be ever executed
+        Console.WriteLine();
+        return "file not found";
+    }
+    else
+    {
+        Settings settings = new Settings()
+        {
+            DefaultSettings = "true",
+            MufaPattern = "default",
+            AndSomethingElse = "default",
+
+        };
+
+        //create and send string to current dir
+        string jsonFile = JsonConvert.SerializeObject(settings);
+        File.WriteAllText($@"{currentDir}\settings_1.json", jsonFile);
+
+        return settings;
+    }
+
+}
+
+*/
