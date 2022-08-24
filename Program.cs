@@ -1,25 +1,11 @@
 ﻿using System;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
-using System.ComponentModel;
-//target
-//
-// stworzyć apkę, która będzie w stanie kopiować elementy do danych folderów
-// i zmieniać ich nazwę
-//
-// dodać opcje, podzielić na opcje szybkie i zaawansowawne
-// - zapisanie ustawień danego pliku
-// - wybór pliku lub wpisanie jego patternu
-// - co z nim zrobić -> usunąć, przenieść, przekopiować?
-//  
-// - czy zmienić nazwę? Jak ją zmienić? (ustawić domyślnie jak katalogu)
-//
-// - dodać do menu możliwość szybkiego wyboru z przedrostkiem --
-//      - w tym celu dodać metody 
 
 
-//co zrobione
-// + naprawione bug z infinite right number choice at the start of program
+//problemy - code z zmianą koloru textu jest szybciej wywoływany..
+// + naprawione bug z y/n
+//
 
 
 
@@ -30,7 +16,7 @@ class Program
 
         Settings settings = SettingsInit();
         MainProgram(settings);
-        
+
     }
 
     public static void MainProgram(Settings settings)
@@ -90,7 +76,7 @@ class Program
         ConsoleKeyInfo key;
 
 
-       
+
         do
         {
             key = Console.ReadKey(true);
@@ -99,7 +85,7 @@ class Program
             {
 
                 bool intChoice = int.TryParse(key.KeyChar.ToString(), out pressedNumber);
-               
+
                 if (intChoice)
                 {
                     if (typedCharacter.Length > 0)
@@ -120,7 +106,7 @@ class Program
 
                     //
                     //if first character would be space
-                    if(typedCharacter.Length == 0)
+                    if (typedCharacter.Length == 0)
                         if (key.Key == ConsoleKey.Spacebar)
                             continue;
 
@@ -128,18 +114,25 @@ class Program
                     typedCommand.Add(key.KeyChar.ToString());
 
 
-                    //text colour changing during special commands
-                    textColor(charToStringsCommands(typedCommand));
+
 
                     //print on console
                     typedCharacter += key.KeyChar;
                     Console.Write(key.KeyChar);
+
+
+                    //random consolekey 
+                    //text colour changing during special commands
+                    //it have to be executed after writing character
+                    textColor(charToStringsCommands(typedCommand, ConsoleKey.Attention));
+
                 }
-                
+
             }
             //else for backspace
             else if (key.Key == ConsoleKey.Backspace && typedCharacter.Length > 0)
             {
+                textColor(charToStringsCommands(typedCommand, ConsoleKey.Backspace));
 
                 typedCharacter = typedCharacter.Substring(0, (typedCharacter.Length - 1));
                 Console.Write("\b \b");
@@ -159,7 +152,7 @@ class Program
         // Stops Receving Keys Once Enter is Pressed
         while (!flag);
 
-        
+
         //Console.WriteLine();
         //foreach (var item in charToStringsCommands(typedCommand))
         //{
@@ -172,46 +165,80 @@ class Program
 
     public static void textColor(string[] input)
     {
+        //regex had to be use due to simplines of lastTypedWord.Contains
+        Regex regex1 = new Regex("-[a-zA-Z]+", RegexOptions.IgnoreCase);
+        Regex regex2 = new Regex("--[a-zA-Z]+", RegexOptions.IgnoreCase);
+        string lastTypedWord = input[input.Length - 1];
 
-
-        for (int i = 0; i <input.Length; i++)
+        if (lastTypedWord.Contains("--"))
         {
-            if (input[i].Contains("-") ^ input[i].Contains("--"))
+
+            //to replace one "-" with grey color
+            if (lastTypedWord.Length == 2)
+            {
+                Console.CursorVisible = false;
+                Console.ForegroundColor = ConsoleColor.DarkGray;
+                Console.Write("\b\b");
+                Console.Write("--");
+                Console.CursorVisible = true;
+            }
+            else if (regex2.IsMatch(lastTypedWord))
             {
                 Console.ForegroundColor = ConsoleColor.DarkGray;
             }
-            else
+
+        }
+        else if (lastTypedWord.Contains("-"))
+        {
+
+            if (lastTypedWord.Length == 1)
             {
-                Console.ResetColor();
+                Console.CursorVisible = false;
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                Console.Write("\b");
+                Console.Write("-");
+                Console.CursorVisible = true;
+            }
+            else if (regex1.IsMatch(lastTypedWord))
+            {
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
             }
         }
+        else if (lastTypedWord == "") 
+        {
+
+            return;
+        }
+        else
+        {
+            Console.ResetColor();
+        }
     }
-    
-    public static string[] charToStringsCommands(List<string> charInput)
+
+    public static string[] charToStringsCommands(List<string> charInput, ConsoleKey backspace)
     {
-        string[] input = charInput.ToArray();
-        List<string> CoveredInput = new List<string>();
+
+        string[] finalArray;
+        string newItem;
         List<string> temp = new List<string>();
 
-        for (int i = input.Length - 1; i >= 0 ; i--)
+        if (backspace == ConsoleKey.Backspace)
         {
-           
+            charInput.RemoveAt(charInput.Count - 1);
+            newItem = String.Join("", temp);
+            temp = newItem.Split(" ").ToList();
 
-            
-                if (input[i] != " ")
-                    CoveredInput.Insert(0, input[i]);
-
-                else
-                {
-                    Console.WriteLine("\n\n\n");
-                    Console.WriteLine(String.Join("", CoveredInput));
-
-                }
-
-            
+            return finalArray = temp.ToArray();
         }
-        return CoveredInput.ToArray();
-        
+
+        foreach (var item in charInput)
+        {
+            newItem = String.Join("", charInput);
+            temp = newItem.Split(" ").ToList();
+        }
+
+        return finalArray = temp.ToArray();
+
     }
     public static void CloseApp()
     {
@@ -324,7 +351,7 @@ class Program
         else
         {
             Settings settings = new Settings();
-            
+
 
             //create and send string to current dir
             string jsonFile = JsonConvert.SerializeObject(settings);
