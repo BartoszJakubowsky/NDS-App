@@ -1,10 +1,12 @@
 ﻿using System.Text.RegularExpressions;
 
+//dodać jsona do odczytu kolorów
+
 public class InOut
 {
 
 
-    public static string[] ConsoleReadKey()
+    public static string[] ConsoleReadKey(Settings settings)
     {
         //flag for stopping loop
         bool flag = false;
@@ -62,7 +64,7 @@ public class InOut
 
                     //text colour changing during special commands
                     //it have to be executed after writing character
-                    TextColor(charToStringsCommands(typedCommand), key.Key);
+                    TextColor(charToStringsCommands(typedCommand), key.Key, settings);
 
 
                     //print on console
@@ -79,7 +81,7 @@ public class InOut
                 Console.Write("\b \b");
                 typedCharacter = typedCharacter.Substring(0, (typedCharacter.Length - 1));
 
-                TextColor(charToStringsCommands(typedCommand, ConsoleKey.Backspace), key.Key);
+                TextColor(charToStringsCommands(typedCommand, ConsoleKey.Backspace), key.Key, settings);
 
             }
 
@@ -144,8 +146,11 @@ public class InOut
         return finalArray = temp.ToArray();
     }
 
-    public static void TextColor(string[] input, ConsoleKey Key)
+    public static void TextColor(string[] input, ConsoleKey Key, Settings settings)
     {
+        //write code that checks json file for changed color
+
+
         //regex had to be use due to simplines of lastTypedWord.Contains
         Regex regex1 = new Regex("-[a-zA-Z]+", RegexOptions.IgnoreCase);
         Regex regex2 = new Regex("--[a-zA-Z]+", RegexOptions.IgnoreCase);

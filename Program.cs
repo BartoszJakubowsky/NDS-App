@@ -13,12 +13,13 @@ class Program
         Settings settings = SettingsInit();
         MainProgram(settings);
 
+
     }
         
     public static void MainProgram(Settings settings)
     {
         Menu();
-        string[] choice = InOut.ConsoleReadKey();
+        string[] choice = InOut.ConsoleReadKey(settings);
 
         MainProgram(settings);
 
@@ -33,6 +34,7 @@ class Program
         //          //
         Console.WriteLine("\t\t\tNDS App v2\n");
         Console.WriteLine("Copy [1] Move [2] Create Folder [3] Settings [4] Close [5]\n");
+        Console.WriteLine("or type command (type help to see more)\n");
 
         //                  //   
         //  chosen option  //
