@@ -12,7 +12,7 @@ public class Move
     {
     }
 
-
+    
     private string MoveFiles(string filePath, string finalFilePath, string subFolders = "", string whatToMove = "", string extension = "", params string[] fileName)
     {
         string[] files;
@@ -40,7 +40,7 @@ public class Move
                     if (Directory.Exists($@"{filePath}\{fileName[i]}") == true)
                     {
                         tempListOfSubFolders.Add(fileName[i]);
-                        Console.WriteLine($"File {fileName[i]} does not exists in given folder");
+                        //Console.WriteLine($"File {fileName[i]} does not exists in given folder");
                     }
                 }
 
@@ -133,7 +133,7 @@ public class Move
 
 
     }
-
+    
 
 
 }

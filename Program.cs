@@ -3,6 +3,10 @@ using System.Text.RegularExpressions;
 
 
 //InOut jako segregator na metody
+//
+//dodać możliwość dodawania cyfr po wpisaniu - i --
+//
+//dodać blokadę dodawania komendy - i -- po wpisaniu instrukcji
 
 
 class Program
@@ -107,7 +111,7 @@ class Program
 
         // get current directory
         //string currentDir = Directory.GetCurrentDirectory();
-        string currentDir = @"C:\Users\barto\OneDrive\Pan_Programista\C#\# Projekty\Projekt NDS v2 - PC\NDS-App-v2";
+        string currentDir = @"C:\Users\Nowe Jakubki\OneDrive\Pan_Programista\C#\# Projekty\Projekt NDS v2 - PC\NDS-App-v2";
 
         //
         // create search pattern for settings jsons files
