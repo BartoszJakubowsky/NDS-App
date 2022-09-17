@@ -31,9 +31,7 @@ public class InOut
 
             if (key.Key != ConsoleKey.Backspace && key.Key != ConsoleKey.Enter)
             {
-
                 bool intChoice = int.TryParse(key.KeyChar.ToString(), out pressedNumber);
-
                 if (intChoice)
                 {
                     if (typedCharacter.Length > 0)
@@ -112,11 +110,6 @@ public class InOut
         }
         else
         {
-            Console.WriteLine();
-            foreach (var item in returnChoice)
-            {
-                Console.Write(item + " ");
-            }
             return returnChoice;
         }
 

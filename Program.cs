@@ -24,7 +24,7 @@ class Program
     {
         Menu();
         string[] choice = InOut.ConsoleReadKey(settings);
-
+        CommandSender(choice);
         MainProgram(settings);
 
 
@@ -45,6 +45,8 @@ class Program
         //                //
         Console.Write("Enter your choice: ");
     }
+
+
 
     public static void CloseApp()
     {
@@ -167,5 +169,36 @@ class Program
         }
 
     }
+
+    public static void CommandSender(string[] commands)
+    {
+        string toDo = commands[0];
+
+        if (toDo.Contains("-"))
+        {
+            if (toDo.Contains("--"))
+            {
+                Console.WriteLine("\nAt first type -command");
+            }
+            else
+            {
+                if (toDo == "-move")
+                {
+                    MoveFilesClass moveFiles = new MoveFilesClass();
+                    moveFiles.Init(commands);
+                }
+                else
+                {
+                    Console.WriteLine("\nCommand cannot be used at the moment");
+                }
+                //Console.WriteLine($"\nPodano komendę {toDo.Substring(1,toDo.Length-1)}");
+            }
+        }
+        else
+        {
+            Console.WriteLine("\nYou didn't write a command");
+        }
+    }
+
 }
 

@@ -3,137 +3,279 @@
 //co możesz podać? 
 
 //Move - standard comment (Move file path_from path_for)
+//
+//INSTRUKCJA
+// najpierw dodaję ścieżkę pierwotną, potem finalną ścieżkę i to musi być
+// + w wariacjach mogę podać co ma być przeniesione, domyślnie będzie wszystko 
+// 
 //-wariacje -> all, extension, folders, only empty folders, 
 //--dodatkowe opcje -> rename, save, 
 
-public class Move
+public class MoveFilesClass
 {
-    public Move()
+    public MoveFilesClass()
     {
     }
 
-    
-    private string MoveFiles(string filePath, string finalFilePath, string subFolders = "", string whatToMove = "", string extension = "", params string[] fileName)
+    public void Init(string[] commands)
     {
-        string[] files;
+        string filePath = commands[1];
+        string finalFilePath = commands[2];
+        string create = "";
+        string subFolders = "";
+        string whatToMove = "";
+        string extension = "";
+
+        void commandChecker(string command, string[] commands, int index)
+        {
+            if (command.Contains("--"))
+            {
+                if (command == "--create")
+                    create = command;
+                else if (command == "--subfolders")
+                    subFolders = command;
+                else if (command == whatToMove)
+                {
+                    whatToMove = commands[index + 1];
+                }
+                else if (command == "--extension")
+                    extension = command;
+            }
+        }
+
+        for (int i = 1; i < commands.Length; i++)
+        {
+            commandChecker(commands[i], commands, i);
+        }
+
+
+        string result = MoveFiles(filePath, finalFilePath, create, subFolders, whatToMove, extension);
+        Console.WriteLine($"\n {result}"); 
+
+    }
+
+    public string MoveFiles(string filePath, string finalFilePath, string create = "", string subFolders = "", string whatToMove = "", string extension = "", params string[] fileName)
+    {
         //filename -> ilość plików
         //subfolders
         //extension -> declares if it's file or not 
         //what to move - file or directory
+
+
+
+        //na start sprawdzić
+        // - czy istnieją obie ścieżki + czy istnieje create
+        // - czy źródłowa ścieżka ma pliki
+
+        //
+        //source path checker
         if (Directory.Exists(filePath) == false)
             return "home path or file does not exist";
 
+        if (Directory.GetFileSystemEntries(filePath, "*", SearchOption.TopDirectoryOnly).Length == 0)
+            return "home path is empty";
+        //
+        //final file path checker / creator
         if (finalFilePath == "")
-            return "target path does not exist";
+        {
+            if(Create(create) == false)
+            {
+                return "Final path does not exist and --create option was not writtend";
+            }
+        }
+        else
+        {
+            return "You didn't write final path";
+        }
 
+        string[] files = Search_and_SubFolders(subFolders);
+        WhatFileToMove(files, whatToMove, extension);
+        return "Files moved";
 
-        static string Optional(string filePath, string subFolders, string whatToMove, string extension, params string[] fileName)
+        bool Create(string create)
+        {
+            if (Directory.Exists(finalFilePath) == false)
+            {
+                if (create != "")
+                {
+                    Directory.CreateDirectory(finalFilePath);
+                    return true;
+
+                }
+                else
+                    Console.WriteLine("target path does not exist and you didn't wanted to create one");
+                return false;
+            }
+            else
+            {
+                Console.WriteLine("Directory " + finalFilePath + " already exist");
+                int n = 0;
+                do
+                {
+                    n++;
+
+                } while (Directory.Exists($"{finalFilePath}/({n})") == false);
+
+                Directory.CreateDirectory($"{finalFilePath}/({n})");
+                return true;
+
+            }
+
+        }
+        string[] Search_and_SubFolders(string subFolders)
         {
 
-            string[] fileNameChecker(string[] fileName)
+            List<string[]> tempSubFolders = new List<string[]>();
+
+            if (subFolders == "")
             {
-
-                List<string> tempListOfSubFolders = new List<string>();
-
-                for (int i = 0; i < fileName.Length; i++)
-                {
-                    if (Directory.Exists($@"{filePath}\{fileName[i]}") == true)
-                    {
-                        tempListOfSubFolders.Add(fileName[i]);
-                        //Console.WriteLine($"File {fileName[i]} does not exists in given folder");
-                    }
-                }
-
-                if (tempListOfSubFolders.Count != 0)
-                {
-                    return tempListOfSubFolders.ToArray();
-                }
-
-                string[] emptyArr = new string[] { "" };
-                return emptyArr;
-
-
+                return Directory.GetFileSystemEntries(filePath, "*", SearchOption.TopDirectoryOnly);
+            }
+            else
+            {
+                return Directory.GetFileSystemEntries(filePath, "*", SearchOption.AllDirectories);
             }
 
-            List<string> finalPath = new List<string>();    
-            //first check if the given path exist
+        }
+        void WhatFileToMove(string[] filesArr, string whatToMove, string extension)
+        {
 
-            if (Directory.Exists(filePath) == false)
-                return "Soruce path does not exist";
 
-            string[] filesArr = null;
-            if (fileName.Length != 0)
+            void Extension(string extension)
             {
-                if (fileNameChecker(fileName)[0] == "")
-                    return "Any of files or folders were found in given directory";
-                else
-                {
-                    filesArr = fileNameChecker(fileName);
-                }
-            }
+                int counter = 0;
 
-            if (subFolders == "yes" ^ subFolders == "y" ^ subFolders == "tak" ^ subFolders == "t")
-            {
-
-                List<string[]> tempSubFolders = new List<string[]>();
-
-                if (filesArr != null)
+                if (extension == "pdf")
                 {
                     for (int i = 0; i < filesArr.Length; i++)
                     {
-                        if (Path.GetExtension(filesArr[i]) == String.Empty)
+                        if (Path.GetExtension(filesArr[i]) == ".pdf")
                         {
-                            if (Directory.GetFileSystemEntries(filesArr[i], "*", SearchOption.AllDirectories).Length == 0)
-                            {
-                                Console.WriteLine($"Folder {filesArr[i]} is empty");
-                            }
-                            else
-                            {
-                                tempSubFolders.Add(Directory.GetFileSystemEntries(filesArr[i], "*", SearchOption.AllDirectories));
-                            }
+                            File.Move(filesArr[i], finalFilePath);
+                            counter++;
                         }
                     }
-
-                    if (tempSubFolders.Count == 0)
-                        return "Wrong option -> can't get subfolders of a file";
-                }
-                else
-                {
-                    if (Path.GetExtension(filePath) != String.Empty)
-                        return "Wrong option -> can't get subfolder of a file";
-
-                    if (Directory.GetFileSystemEntries(filePath, "*", SearchOption.AllDirectories).Length == 0)
-                    {
-                        Console.WriteLine($"There is no subfolders in {filePath}");
-                    }
+                    if (counter == 0)
+                        Console.WriteLine("PDF files not found");
                     else
+                        Console.WriteLine($"{counter} files were moved");
+
+                }
+                else if (extension == "jpg")
+                {
+                    for (int i = 0; i < filesArr.Length; i++)
                     {
-                        tempSubFolders.Add(Directory.GetFileSystemEntries(filePath, "*", SearchOption.AllDirectories));
+                        if (Path.GetExtension(filesArr[i]) == ".jpg")
+                        {
+                            File.Move(filesArr[i], finalFilePath);
+                            counter++;
+                        }
+                    }
+                    if (counter == 0)
+                        Console.WriteLine("JPG files not found");
+                    else
+                        Console.WriteLine($"{counter} files were moved");
+                }
+                else if (extension == "png")
+                {
+                    for (int i = 0; i < filesArr.Length; i++)
+                    {
+                        if (Path.GetExtension(filesArr[i]) == ".png")
+                        {
+                            File.Move(filesArr[i], finalFilePath);
+                            counter++;
+                        }
+                    }
+                    if (counter == 0)
+                        Console.WriteLine("PNG files not found");
+                    else
+                        Console.WriteLine($"{counter} files were moved");
+                }
+                else if (extension == "xlsx" ^ extension == "excel")
+                {
+                    for (int i = 0; i < filesArr.Length; i++)
+                    {
+                        if (Path.GetExtension(filesArr[i]) == ".xlsx")
+                        {
+                            File.Move(filesArr[i], finalFilePath);
+                            counter++;
+                        }
+                    }
+                    if (counter == 0)
+                        Console.WriteLine("Excel files not found");
+                    else
+                        Console.WriteLine($"{counter} files were moved");
+                }
+                else if (extension == "docx" ^ extension == "word")
+                {
+                    for (int i = 0; i < filesArr.Length; i++)
+                    {
+                        if (Path.GetExtension(filesArr[i]) == ".docx")
+                        {
+                            File.Move(filesArr[i], finalFilePath);
+                            counter++;
+                        }
+                    }
+                    if (counter == 0)
+                        Console.WriteLine("Word files not found");
+                    else
+                        Console.WriteLine($"{counter} files were moved");
+                }
+            }
+
+            if (extension != "")
+            {
+                Extension(extension);
+                return;
+            }
+
+            if (whatToMove != "")
+            {
+                if (whatToMove == "file" ^ whatToMove == "files")
+                {
+
+
+
+                    for (int i = 0; i < filesArr.Length; i++)
+                    {
+
+                        if (File.Exists(filesArr[i]))
+                            File.Move(filesArr[i], finalFilePath);
                     }
                 }
-
-                if(tempSubFolders.Count == 0)
-
-                string[] finalPath = tempSubFolders.ToArray();
-
+                else if (whatToMove == "directory" ^ whatToMove == "dir" ^ whatToMove == "folder" ^ whatToMove == "folders")
+                {
+                    for (int i = 0; i < filesArr.Length; i++)
+                    {
+                        if (Directory.Exists(filesArr[i]))
+                            Directory.Move(filesArr[i], finalFilePath);
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < filesArr.Length; i++)
+                {
+                    Directory.Move(filesArr[i], finalFilePath);
+                }
             }
         }
 
-
-        if (fileName.Length != 0)
-        {
-
-        }
+        //tu utworzyć osobne dla files -> wiadmom czego szukać to nie będzie potrzeba automatyzacji
 
 
-        if (fileName.Length == 0)
-        {
-        }
+
+
+
+
+
+
+
 
 
 
     }
-    
+
 
 
 }
