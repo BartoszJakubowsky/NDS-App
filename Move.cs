@@ -19,8 +19,8 @@ public class MoveFilesClass
 
     public void Init(string[] commands)
     {
-        string filePath = commands[1];
-        string finalFilePath = commands[2];
+        string filePath = "";
+        string finalFilePath = "";
         string create = "";
         string subFolders = "";
         string whatToMove = "";
@@ -39,8 +39,21 @@ public class MoveFilesClass
                     whatToMove = commands[index + 1];
                 }
                 else if (command == "--extension")
-                    extension = command;
+                    extension = commands[index + 1];
             }
+
+            if (commands.Length >= 3)
+            {
+                commands[1] = @"C:\Users\Nowe Jakubki\Pictures\Próba";
+                filePath = commands[1];
+            }
+
+            if (commands.Length >= 3)
+            {
+                commands[2] = @"C:\Users\Nowe Jakubki\Pictures\docelowe";
+                finalFilePath = commands[2];
+            }
+
         }
 
         for (int i = 1; i < commands.Length; i++)
@@ -83,11 +96,11 @@ public class MoveFilesClass
                 return "Final path does not exist and --create option was not writtend";
             }
         }
-        else
+        else if (finalFilePath == "")
         {
-            return "You didn't write final path";
+            return "You didn't write final path ";
         }
-
+        
         string[] files = Search_and_SubFolders(subFolders);
         WhatFileToMove(files, whatToMove, extension);
         return "Files moved";
@@ -114,9 +127,9 @@ public class MoveFilesClass
                 {
                     n++;
 
-                } while (Directory.Exists($"{finalFilePath}/({n})") == false);
+                } while (Directory.Exists(@$"{finalFilePath}\({n})") == false);
 
-                Directory.CreateDirectory($"{finalFilePath}/({n})");
+                Directory.CreateDirectory(@$"{finalFilePath}\({n})");
                 return true;
 
             }
@@ -151,7 +164,8 @@ public class MoveFilesClass
                     {
                         if (Path.GetExtension(filesArr[i]) == ".pdf")
                         {
-                            File.Move(filesArr[i], finalFilePath);
+                            string fileName = Path.GetFileName(filesArr[i]);
+                            File.Move(filesArr[i], @$"{finalFilePath}\{fileName}");
                             counter++;
                         }
                     }
@@ -167,7 +181,8 @@ public class MoveFilesClass
                     {
                         if (Path.GetExtension(filesArr[i]) == ".jpg")
                         {
-                            File.Move(filesArr[i], finalFilePath);
+                            string fileName = Path.GetFileName(filesArr[i]);
+                            File.Move(filesArr[i], @$"{finalFilePath}\{fileName}");
                             counter++;
                         }
                     }
@@ -182,7 +197,8 @@ public class MoveFilesClass
                     {
                         if (Path.GetExtension(filesArr[i]) == ".png")
                         {
-                            File.Move(filesArr[i], finalFilePath);
+                            string fileName = Path.GetFileName(filesArr[i]);
+                            File.Move(filesArr[i], @$"{finalFilePath}\{fileName}");
                             counter++;
                         }
                     }
@@ -197,7 +213,8 @@ public class MoveFilesClass
                     {
                         if (Path.GetExtension(filesArr[i]) == ".xlsx")
                         {
-                            File.Move(filesArr[i], finalFilePath);
+                            string fileName = Path.GetFileName(filesArr[i]);
+                            File.Move(filesArr[i], @$"{finalFilePath}\{fileName}");
                             counter++;
                         }
                     }
@@ -212,7 +229,8 @@ public class MoveFilesClass
                     {
                         if (Path.GetExtension(filesArr[i]) == ".docx")
                         {
-                            File.Move(filesArr[i], finalFilePath);
+                            string fileName = Path.GetFileName(filesArr[i]);
+                            File.Move(filesArr[i], @$"{finalFilePath}\{fileName}");
                             counter++;
                         }
                     }
@@ -238,17 +256,22 @@ public class MoveFilesClass
 
                     for (int i = 0; i < filesArr.Length; i++)
                     {
+                        string fileName = Path.GetFileName(filesArr[i]);
 
                         if (File.Exists(filesArr[i]))
-                            File.Move(filesArr[i], finalFilePath);
+                            File.Move(filesArr[i], @$"{finalFilePath}\{fileName}");
                     }
                 }
                 else if (whatToMove == "directory" ^ whatToMove == "dir" ^ whatToMove == "folder" ^ whatToMove == "folders")
                 {
                     for (int i = 0; i < filesArr.Length; i++)
                     {
+
+                        string fileName = Path.GetFileName(filesArr[i]);
+
                         if (Directory.Exists(filesArr[i]))
-                            Directory.Move(filesArr[i], finalFilePath);
+                            Directory.Move(filesArr[i], @$"{finalFilePath}\{fileName}");
+
                     }
                 }
             }
@@ -256,7 +279,9 @@ public class MoveFilesClass
             {
                 for (int i = 0; i < filesArr.Length; i++)
                 {
-                    Directory.Move(filesArr[i], finalFilePath);
+                    string fileName = Path.GetFileName(filesArr[i]);
+
+                    Directory.Move(filesArr[i], @$"{finalFilePath}\{fileName}");
                 }
             }
         }
