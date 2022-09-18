@@ -187,6 +187,11 @@ class Program
                     MoveFilesClass moveFiles = new MoveFilesClass();
                     moveFiles.Init(commands);
                 }
+                else if (toDo == "-help")
+                {
+                    Settings settings = new Settings();
+                    settings.Help();
+                }
                 else
                 {
                     Console.WriteLine("\nCommand cannot be used at the moment");

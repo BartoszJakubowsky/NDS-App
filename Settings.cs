@@ -33,6 +33,16 @@ public class Settings
         return new Settings();
     }
 
+    public void Help()
+    {
+        Console.WriteLine("\n");
+        Console.WriteLine("MOVE commands:");
+        Console.WriteLine("--extension: ... -> it's accepting one parameter witch moves files only with given extension");
+        Console.WriteLine("--create -> by default it creates final directory if this does not exist");
+        Console.WriteLine("--whatmove: ... -< it's accepting one of parameters: file / folder -> and moves only files or only folders\n\n");
+    }
+
+
  }
 
 
