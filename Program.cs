@@ -192,6 +192,11 @@ class Program
                     Settings settings = new Settings();
                     settings.Help();
                 }
+                else if(toDo == "-copy")
+                {
+                    CopyFileClass copyFiles = new CopyFileClass();
+                    copyFiles.Init(commands);
+                }
                 else
                 {
                     Console.WriteLine("\nCommand cannot be used at the moment");
