@@ -7,7 +7,7 @@ using System.ComponentModel;
 // na razie abond project settings 
 
 
-public class Settings
+class Settings
 {
     public Settings()
     {

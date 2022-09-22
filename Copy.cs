@@ -1,8 +1,8 @@
 ﻿using System;
 
-public class CopyFileClass
+public class CopyFileClass : Save
 {
-    public CopyFileClass()
+    public CopyFileClass() :base("CopyData")
     {
     }
 

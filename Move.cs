@@ -11,12 +11,12 @@
 //-wariacje -> all, extension, folders, only empty folders, 
 //--dodatkowe opcje -> rename, save, 
 
-public class MoveFilesClass
+public class MoveFilesClass : Save
 {
-    public MoveFilesClass()
+    public MoveFilesClass() :base("MoveData")
     {
     }
-
+    
     public void Init(string[] commands)
     {
         string filePath = "";

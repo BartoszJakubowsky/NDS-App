@@ -146,7 +146,7 @@ class Program
                     string fileName = Path.Combine("", Path.GetFileName(json));
                     Console.WriteLine($"Settings loaded from {fileName}\n\n\n");
                     return settings;
-                }
+                    
 
             }
             //actually this code shoudn't be ever executed
