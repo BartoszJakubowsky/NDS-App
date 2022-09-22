@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using System.Text.RegularExpressions;   
+using System.Text.RegularExpressions;
 
 
 //InOut jako segregator na metody
@@ -14,18 +14,17 @@ class Program
     static void Main(string[] args)
     {
 
-        Settings settings = SettingsInit();
-        MainProgram(settings);
+        MainProgram();
 
 
     }
-        
-    public static void MainProgram(Settings settings)
+
+    public static void MainProgram()
     {
         Menu();
-        string[] choice = InOut.ConsoleReadKey(settings);
+        string[] choice = InOut.ConsoleReadKey();
         CommandSender(choice);
-        MainProgram(settings);
+        MainProgram();
 
 
 
@@ -108,67 +107,7 @@ class Program
         }
 
     }
-    public static Settings SettingsInit()
-    {
-
-        // get current directory
-        //string currentDir = Directory.GetCurrentDirectory();
-        string currentDir = @"C:\Users\Nowe Jakubki\OneDrive\Pan_Programista\C#\# Projekty\Projekt NDS v2 - PC\NDS-App-v2";
-
-        //
-        // create search pattern for settings jsons files
-        Regex regex = new Regex("settings_[1-9]\\.json", RegexOptions.IgnoreCase);
-
-        //
-        // create list for settings files
-        List<string> settingsList = new List<string>();
-
-
-        foreach (string file in Directory.GetFiles(currentDir))
-        {
-            if (regex.IsMatch(file))
-            {
-                settingsList.Add(file);
-            }
-        }
-
-
-        if (settingsList.ToArray().Length > 0)
-        {
-            foreach (string json in settingsList.ToArray())
-            {
-                //download string from current directory
-                string jsonFileSerialized = File.ReadAllText(json);
-                Settings settings = JsonConvert.DeserializeObject<Settings>(jsonFileSerialized);
-
-                if (settings.DefaultSettings == "true")
-                {
-                    string fileName = Path.Combine("", Path.GetFileName(json));
-                    Console.WriteLine($"Settings loaded from {fileName}\n\n\n");
-                    return settings;
-                    
-
-            }
-            //actually this code shoudn't be ever executed
-            Console.WriteLine();
-            return new Settings();
-
-
-
-        }
-        else
-        {
-            Settings settings = new Settings();
-
-
-            //create and send string to current dir
-            string jsonFile = JsonConvert.SerializeObject(settings);
-            File.WriteAllText($@"{currentDir}\settings_1.json", jsonFile);
-
-            return settings;
-        }
-
-    }
+    
 
     public static void CommandSender(string[] commands)
     {
@@ -186,16 +125,18 @@ class Program
                 {
                     MoveFilesClass moveFiles = new MoveFilesClass();
                     moveFiles.Init(commands);
+                    moveFiles.SaveInput(commands);
                 }
                 else if (toDo == "-help")
                 {
                     Settings settings = new Settings();
                     settings.Help();
                 }
-                else if(toDo == "-copy")
+                else if (toDo == "-copy")
                 {
                     CopyFileClass copyFiles = new CopyFileClass();
                     copyFiles.Init(commands);
+                    copyFiles.SaveInput(commands);
                 }
                 else
                 {
@@ -211,4 +152,5 @@ class Program
     }
 
 }
+
 

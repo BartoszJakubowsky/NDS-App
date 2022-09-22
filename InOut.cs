@@ -6,7 +6,7 @@ public class InOut
 {
 
 
-    public static string[] ConsoleReadKey(Settings settings)
+    public static string[] ConsoleReadKey()
     {
         //flag for stopping loop
         bool flag = false;
@@ -62,7 +62,7 @@ public class InOut
 
                     //text colour changing during special commands
                     //it have to be executed after writing character
-                    TextColor(charToStringsCommands(typedCommand), key.Key, settings);
+                    TextColor(charToStringsCommands(typedCommand), key.Key);
 
 
                     //print on console
@@ -79,7 +79,7 @@ public class InOut
                 Console.Write("\b \b");
                 typedCharacter = typedCharacter.Substring(0, (typedCharacter.Length - 1));
 
-                TextColor(charToStringsCommands(typedCommand, ConsoleKey.Backspace), key.Key, settings);
+                TextColor(charToStringsCommands(typedCommand, ConsoleKey.Backspace), key.Key);
 
             }
 
@@ -139,7 +139,7 @@ public class InOut
         return finalArray = temp.ToArray();
     }
 
-    public static void TextColor(string[] input, ConsoleKey Key, Settings settings)
+    public static void TextColor(string[] input, ConsoleKey Key)
     {
         //write code that checks json file for changed color
 
