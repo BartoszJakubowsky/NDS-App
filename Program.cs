@@ -138,6 +138,12 @@ class Program
                     copyFiles.Init(commands);
                     copyFiles.SaveInput(commands);
                 }
+                else if (toDo == "-rename")
+                {
+                    RenameClass renameFiles = new RenameClass();
+                    renameFiles.Init(commands);
+                    renameFiles.SaveInput(commands);
+                }
                 else
                 {
                     Console.WriteLine("\nCommand cannot be used at the moment");
