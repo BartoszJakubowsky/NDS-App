@@ -11,7 +11,6 @@ public class Save : JsonSerializerClass
         JsonFile newJsonData;
         //
         //
-        // Zmienić filter!  -> może wyjść z konstruktora? -> może przenieść File.Exist do konstruktora JSona? 
         //
 
         void createJsonFile()

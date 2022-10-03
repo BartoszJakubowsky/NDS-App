@@ -12,7 +12,7 @@ using System.Text.RegularExpressions;
 class Program
 {
     static void Main(string[] args)
-    {
+    {   
 
         MainProgram();
 
@@ -22,11 +22,21 @@ class Program
     public static void MainProgram()
     {
         Menu();
+        string[] test = ConsoleActivity.TypedCharsToConsole();
+        string elo = "";
+
+        foreach(string x in test)
+        {
+            elo += x;
+        }
+
+
+        Console.WriteLine($"\n--------\n{elo}\n---------\n");
+        MainProgram();
         string[] choice = InOut.ConsoleReadKey();
         CommandSender(choice);
-        MainProgram();
 
-
+        
 
     }
 
@@ -36,15 +46,15 @@ class Program
         //   MENU   //
         //          //
         Console.WriteLine("\t\t\tNDS App v2\n");
-        Console.WriteLine("Copy [1] Move [2] Create Folder [3] Settings [4] Close [5]\n");
-        Console.WriteLine("or type command (type help to see more)\n");
+        Console.WriteLine("Typed what do you want to do\n");
+        Console.WriteLine("or type -help to see options\n");
 
         //                  //   
         //  chosen option  //
         //                //
         Console.Write("Enter your choice: ");
     }
-
+    
 
 
     public static void CloseApp()

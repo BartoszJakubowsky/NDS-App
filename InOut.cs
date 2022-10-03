@@ -29,26 +29,22 @@ public class InOut
         {
             key = Console.ReadKey(true);
 
+            if (key.Key == ConsoleKey.LeftArrow ^ key.Key == ConsoleKey.RightArrow)
+            {
+              
+
+                if (key.Key == ConsoleKey.LeftArrow)
+                {
+                    if (typedCharacter.Length == 0)
+                        continue;
+
+                    Console.SetCursorPosition(Console.CursorLeft - 1, Console.CursorTop);
+                }
+            }
+
             if (key.Key != ConsoleKey.Backspace && key.Key != ConsoleKey.Enter)
             {
-                bool intChoice = int.TryParse(key.KeyChar.ToString(), out pressedNumber);
-                if (intChoice)
-                {
-                    if (typedCharacter.Length > 0)
-                        continue;
-                    //
-                    //if user would get out of menu option's range
-                    //
-                    // also it's marked because of trouble to find this
-                    if (pressedNumber > 5 ^ pressedNumber == 0)
-                    {
-                        continue;
-                    }
-                    typedCharacter += key.KeyChar;
-                    Console.Write(key.KeyChar);
-                }
-                else
-                {
+                
 
                     //
                     //if first character would be space
@@ -70,7 +66,7 @@ public class InOut
                     Console.Write(key.KeyChar);
 
 
-                }
+                
 
             }
             //else for backspace
