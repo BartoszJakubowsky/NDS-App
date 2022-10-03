@@ -17,7 +17,7 @@ There was many problems i came trough, such as
 
 - unnessesary calling parent constructor (base) just because I learn something new and I wanted to implement it :D
 
-- console changing colors and console.readline() - it's great example how not to write code and why working at 2am causes problems :) It's not suitable for further development and next time when I will be forced to add something new in this area I'm going to rewrite hole thing to be more flexible and susceptible to change (edit:it's finally happening!);
+- console changing colors and console.readline() - it's great example how not to write code and why working at 2am causes problems :) It's not suitable for further development and next time when I will be forced to add something new in this area I'm going to rewrite whole thing to be more flexible and susceptible to change (edit:it's finally happening!);
 
 - JSON -> oh, this took me away some years from my futher life :d 
 Code is quite simple but I came across with strange bug or mistakenly I overwrite somehow some variable wich caused unwroting any string into json file. Finally it works fine and it's ready to cooperate as auto-hint with CLI when it's will be ready...
