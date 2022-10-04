@@ -63,7 +63,7 @@ public class Save : JsonSerializerClass
             });
 
 
-            for (int i = 1; i < data.Length; i++)
+            for (int i = 0; i < data.Length; i++)
             {
                 jsonFile.HistoryInput.Last().TypedInput.Add(new JsonInput() { Input = data[i] });
 

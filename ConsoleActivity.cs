@@ -1,8 +1,23 @@
 ﻿using System;
 
-public class ConsoleActivity
+
+public class HistoryValid
 {
 
+    public HistoryValid()
+    {
+        this.MatchedHistory = "";
+        this.IsHistory = false;
+    }
+
+    public string MatchedHistory { get; set; }
+    public bool IsHistory { get; set; }
+}
+
+
+
+public class ConsoleActivity 
+{
 
 
     public static string[] TypedCharsToConsole()
@@ -17,11 +32,12 @@ public class ConsoleActivity
         int cursorPosition = consoleChars.Count;
 
         //string with all typed characters
+        JsonSerializerClass deserialize = new JsonSerializerClass();
 
         do
         {
             key = Console.ReadKey(true);
-            whatKeyWasTyped(key, consoleChars, ref cursorPosition);
+            whatKeyWasTyped(key, consoleChars, ref cursorPosition, deserialize);
 
 
         } while (key.Key != ConsoleKey.Enter);
@@ -31,19 +47,36 @@ public class ConsoleActivity
 
     }
 
-    private static void whatKeyWasTyped(ConsoleKeyInfo typedKey, List<string> consoleChars, ref int cursorPosition)
+    private static void whatKeyWasTyped(ConsoleKeyInfo typedKey, List<string> consoleChars, ref int cursorPosition, JsonSerializerClass deserialize)
     {
+        //json file with history input
+        string sourceFile = @"C:\Users\Nowe Jakubki\OneDrive\Pan_Programista\C#\# Projekty\Projekt NDS v2 - PC\NDS-App-v2\cos\savedHistory.json";
+
+        JsonFile historyFiles = null;
+        if (File.Exists(sourceFile))
+        {
+            historyFiles = deserialize.JsonDeserialized();
+        }
+
+        HistoryValid historyValid = new HistoryValid();
+
+
         //right cursor barier
         int commandsLength = consoleChars.Count;
 
         if (typedKey.Key == ConsoleKey.LeftArrow ^ typedKey.Key == ConsoleKey.RightArrow ^ typedKey.Key == ConsoleKey.Home ^ typedKey.Key == ConsoleKey.End)
         {
-            cursorPosition = moveCursor(typedKey, ref cursorPosition, commandsLength);
+            //typedKey -> arrow or home/end
+            //cursorPosition for setting moving range for cursor
+            //commandsLength for right barirer for cursor
+            //historyValid.IsHistory true/false for extend right barier
+
+            cursorPosition = moveCursor(typedKey, ref cursorPosition, commandsLength, historyValid);
 
         }
         else if (typedKey.Key == ConsoleKey.Tab)
         {
-            //autoCompiler();
+            //AutoCompiler();
         }
         else if (typedKey.Key == ConsoleKey.Backspace ^ typedKey.Key == ConsoleKey.Delete)
         {
@@ -52,11 +85,15 @@ public class ConsoleActivity
         else
         {
             Write(typedKey, consoleChars, ref cursorPosition);
+            historyValid = HistoryShower(consoleChars, historyFiles, ConsoleKey.Home);
+            //putted it here insted in Write to code less trasher
+
+
         }
 
     }
 
-    private static int moveCursor(ConsoleKeyInfo whatArrow, ref int cursorPosition, int rightCursorBarier)
+    private static int moveCursor(ConsoleKeyInfo whatArrow, ref int cursorPosition, int rightCursorBarier, HistoryValid history)
     {
 
 
@@ -73,7 +110,15 @@ public class ConsoleActivity
         {
             //right barrier
             if (cursorPosition == rightCursorBarier)
-                return cursorPosition;
+            {
+                //check if there is historyShower
+                if (history.IsHistory == true)
+                {
+
+                }
+                else
+                    return cursorPosition;
+            }
 
             Console.SetCursorPosition(Console.GetCursorPosition().Left + 1, Console.GetCursorPosition().Top);
             return cursorPosition + 1;
@@ -198,4 +243,121 @@ public class ConsoleActivity
         }
     }
 
+    private static void AutoCompiler()
+    {
+        //...
+    }
+
+    public static HistoryValid HistoryShower(List<string> consoleChars, JsonFile historyFiles, ConsoleKey arrowUpDown)
+    {
+        HistoryValid hisVal = new HistoryValid();
+
+        if (historyFiles == null)
+        {
+            hisVal.IsHistory = false;
+            hisVal.MatchedHistory = "";
+            return hisVal;
+        }
+        hisVal.IsHistory = true;
+        string[] typedStrings = CharListToStringArray(consoleChars);
+        //final string
+        string finalString = "";
+        //
+        //converter from array to string
+        //string tempString = "";
+        //for (int i = 0; i < test.Length; i++)
+        //{
+
+        //    tempString += test[i];
+
+        //    if (i + 1 != test.Length)
+        //        tempString += " ";
+
+        //}
+
+        //if arr is up or down
+        if (arrowUpDown == ConsoleKey.DownArrow ^ arrowUpDown == ConsoleKey.UpArrow)
+        {
+            //future code below
+
+
+            //first check last command, when typed copy/move/rename etc. search only for those with this action (same for below)
+
+            //add new right barier 
+            //add element to list
+
+
+
+        }
+        else
+        {
+            //
+            //take last typed command, take it length and compare to history
+            //
+            //last typed string
+            string lastStringFromArray = typedStrings[typedStrings.Length - 1];
+
+            //length of last typed string
+            int length = lastStringFromArray.Length;
+
+            //string for history purpouse
+            string historyString;
+            for (int i = 0; i < typedStrings.Length; i++)
+            {
+                for (int j = 0; j < historyFiles.HistoryInput[0].TypedInput.Count; j++)
+                {
+
+
+                    historyString = historyFiles.HistoryInput[0].TypedInput[j].Input;
+
+                    if (lastStringFromArray.Length > historyString.Length)
+                        continue;
+
+                    finalString = lastStringFromArray + historyString.Remove(0, length);
+
+                    if (finalString == historyString)
+                    {
+                        finalString = historyString.Remove(0, length);
+                    }
+                    
+                }
+                
+
+            }
+            
+        }
+        hisVal.IsHistory = true;
+        hisVal.MatchedHistory = finalString;
+        return hisVal;
+
+
+
+
+    }
+
+    private static string[] CharListToStringArray(List<string> consoleChars)
+    {
+
+        string[] tempArr = consoleChars.ToArray();
+        List<string> listToFinalArr = new List<string>();
+        string tempStr = "";
+
+        for (int i = 0; i < tempArr.Length; i++)
+        {
+            if (tempArr[i] != " ")
+            {
+                tempStr += tempArr[i];
+
+                if (i+1 != tempArr.Length)
+                    continue;
+            }
+
+            listToFinalArr.Add(tempStr);
+            tempStr = "";
+        }
+
+        return listToFinalArr.ToArray();
+    }
 }
+
+
