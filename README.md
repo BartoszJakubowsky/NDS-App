@@ -17,7 +17,7 @@ There was many problems i came trough, such as
 
 - unnessesary calling parent constructor (base) just because I learn something new and I wanted to implement it :D
 
-- console changing colors and console.readline() - it's great example how not to write code and why working at 2am causes problems :) It's not suitable for further development and next time when I will be forced to add something new in this area I'm going to rewrite hole thing to be more flexible and susceptible to change;
+- console changing colors and console.readline() - it's great example how not to write code and why working at 2am causes problems :) It's not suitable for further development and next time when I will be forced to add something new in this area I'm going to rewrite whole thing to be more flexible and susceptible to change (edit:it's finally happening!);
 
 - JSON -> oh, this took me away some years from my futher life :d 
 Code is quite simple but I came across with strange bug or mistakenly I overwrite somehow some variable wich caused unwroting any string into json file. Finally it works fine and it's ready to cooperate as auto-hint with CLI when it's will be ready...
@@ -26,14 +26,14 @@ Code is quite simple but I came across with strange bug or mistakenly I overwrit
 
 - lot of smaller errors such as wrong path, wrong string name, mostly with move / copy file. Now it works fine.
 
-How does it wokr in summary? 
+How does it work in summary? 
 
-In "menu" you type a command with thing you want to do (right now you can aslo write a digit but not for long).
+In "menu" you type a command with thing you want to do (right now you can also write a digit but not for long edit: not any more 😉).
 
-Avaible commands right now are help, move, copy, in the future there will be among others a settings command.
+Avaible commands right now are help, move, copy, rename, in the future there will be among others a settings command.
 
 CLI parse characters into string array and sends it to the right class.
-Main command are typed with prefix "-",  for example "-move", then you type home path and target path (in move and copy class right now this part of array is assigned to specific path due to lack of posibility to paste paths and to speed up develop process)
+Main command are typed with prefix "-",  for example "-move", then you type home path and target path (in move and copy class right now this part of array is assigned to specific path due to lack of posibility to paste paths and to speed up develop process (edit: it's going to change soon 😁))
 
 After main command and writing boths paths, you can write additional commands, starting with prefix "--". 
 There's avaible:
@@ -44,4 +44,4 @@ There's avaible:
 -- whatrename (in -rename)
 
 App is being develop after hours so sometimes when I wrote something late at night, next day I wonder how someone could wrote something so bad :(
-I guess my only hope is to keep coding:)
+I guess my only hope is to keep coding :)
