@@ -81,11 +81,12 @@ public class ConsoleActivity
         else if (typedKey.Key == ConsoleKey.Backspace ^ typedKey.Key == ConsoleKey.Delete)
         {
             Delete(typedKey, ref cursorPosition , commandsLength, consoleChars); 
+            historyValid = HistoryShower(consoleChars, historyFiles, typedKey, ref cursorPosition);
         }
         else
         {
             Write(typedKey, consoleChars, ref cursorPosition);
-            historyValid = HistoryShower(consoleChars, historyFiles, ConsoleKey.Home);
+            historyValid = HistoryShower(consoleChars, historyFiles, typedKey, ref cursorPosition);
             //putted it here insted in Write to code less trasher
 
 
@@ -248,11 +249,15 @@ public class ConsoleActivity
         //...
     }
 
-    public static HistoryValid HistoryShower(List<string> consoleChars, JsonFile historyFiles, ConsoleKey arrowUpDown)
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////                          history     /////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    public static HistoryValid HistoryShower(List<string> consoleChars, JsonFile historyFiles, ConsoleKeyInfo consoleKey, ref int cursorPosition)
     {
         HistoryValid hisVal = new HistoryValid();
 
-        if (historyFiles == null)
+        if (historyFiles == null ^ consoleChars.Count == 0)
         {
             hisVal.IsHistory = false;
             hisVal.MatchedHistory = "";
@@ -275,8 +280,137 @@ public class ConsoleActivity
 
         //}
 
+
+        //for posibble use in belowed function
+        int cursorPosition2 = cursorPosition;
+
+        string showHistory()
+        {
+
+            //variables needed for authints
+            //
+            //              
+            //take last typed command, take it length and compare to history
+            //
+            //last typed string
+            string lastStringFromArray = typedStrings[typedStrings.Length - 1];
+
+            //length of last typed string
+            int length = lastStringFromArray.Length;
+
+            //string for history purpouse
+            string historyString;
+
+            //nessesarry for moving cursor to it's previous position
+            int allHistoryStringsLength = 0;
+
+            //variable to cooperate autohints when spacebar is pressed
+            int isSpaceBar = 0;
+
+            //
+            //logic
+            //
+            void deleteHints()
+            {
+
+                Console.CursorVisible = false;
+                Console.SetCursorPosition(Console.CursorLeft + allHistoryStringsLength, Console.CursorTop);
+                for (int erase = 0; erase < allHistoryStringsLength; erase++)
+                {
+                    Console.Write("\b \b");
+                }
+                Console.CursorVisible = true;
+
+                //Console.SetCursorPosition(Console.CursorLeft - lastStringFromArray.Length + cursorPosition2, Console.CursorTop);
+            }
+
+            //loop if typedStrings.Leng
+            if (consoleKey.Key == ConsoleKey.Spacebar)
+                return finalString = "";
+
+
+                for (int j = 0; j < historyFiles.HistoryInput[0].TypedInput.Count; j++)
+                {
+
+
+                    historyString = historyFiles.HistoryInput[0].TypedInput[j].Input;
+
+                //if (lastStringFromArray.Length > historyString.Length)
+                //{
+                //    //if there is some hints -> delete this
+                //    Console.WriteLine();
+                //    Console.WriteLine(historyString);
+                //    continue;
+                //}
+
+                //check what was typed + rest of the Input world equals word in history
+                if (lastStringFromArray.Length <= historyString.Length)
+                            finalString = lastStringFromArray + historyString.Remove(0, length);
+
+                Console.WriteLine(finalString + " " + historyString);
+                    if(finalString != historyString ^ lastStringFromArray.Length > historyString.Length)
+                    {
+                        Console.WriteLine("działąąąąąąąąąąą");
+                        deleteHints();
+                        return finalString = "";
+                    }
+                    //
+
+                    //if true, show rest of matched word and all behind it
+                    if (finalString == historyString)
+                    {
+
+                        //matched word
+                        finalString = historyString.Remove(0, length);
+
+                        //down here is rest words showing on console
+                        Console.CursorVisible = false;
+                        Console.ForegroundColor = ConsoleColor.DarkGray;
+                        Console.Write(finalString);
+
+                        for (int k = j + 1; k < historyFiles.HistoryInput[0].TypedInput.Count; k++)
+                        {
+                            historyString = historyFiles.HistoryInput[0].TypedInput[k].Input;
+
+                            //to avoid moving hints one space after pressing space bar
+                            if (consoleKey.Key == ConsoleKey.Spacebar )
+                            {
+                                //if (isSpaceBar == 0)
+                                //{
+                                //    Console.Write(historyString);
+                                //    allHistoryStringsLength += historyString.Length;
+                                //}
+                                //else
+                                
+                                    Console.Write(" " + historyString);
+                                    allHistoryStringsLength += historyString.Length + 1;
+                                
+
+                                isSpaceBar++;
+                            }
+                            //normal when space isn't pressed
+                            else
+                            {
+                                Console.Write(" " + historyString);
+                                allHistoryStringsLength += historyString.Length + 1;
+                            }
+                        }
+                        Console.SetCursorPosition(Console.CursorLeft - finalString.Length - allHistoryStringsLength, Console.CursorTop);
+                        Console.ResetColor();
+                        Console.CursorVisible = true;
+
+
+                        break;
+
+                    }
+
+                }
+            
+            return finalString;
+        }
+
         //if arr is up or down
-        if (arrowUpDown == ConsoleKey.DownArrow ^ arrowUpDown == ConsoleKey.UpArrow)
+        if (consoleKey.Key == ConsoleKey.DownArrow ^ consoleKey.Key == ConsoleKey.UpArrow)
         {
             //future code below
 
@@ -289,42 +423,15 @@ public class ConsoleActivity
 
 
         }
+        else if (consoleKey.Key == ConsoleKey.Backspace ^ consoleKey.Key == ConsoleKey.Delete)
+        {
+            finalString = showHistory();
+        }
         else
         {
-            //
-            //take last typed command, take it length and compare to history
-            //
-            //last typed string
-            string lastStringFromArray = typedStrings[typedStrings.Length - 1];
 
-            //length of last typed string
-            int length = lastStringFromArray.Length;
+            finalString = showHistory();
 
-            //string for history purpouse
-            string historyString;
-            for (int i = 0; i < typedStrings.Length; i++)
-            {
-                for (int j = 0; j < historyFiles.HistoryInput[0].TypedInput.Count; j++)
-                {
-
-
-                    historyString = historyFiles.HistoryInput[0].TypedInput[j].Input;
-
-                    if (lastStringFromArray.Length > historyString.Length)
-                        continue;
-
-                    finalString = lastStringFromArray + historyString.Remove(0, length);
-
-                    if (finalString == historyString)
-                    {
-                        finalString = historyString.Remove(0, length);
-                    }
-                    
-                }
-                
-
-            }
-            
         }
         hisVal.IsHistory = true;
         hisVal.MatchedHistory = finalString;
