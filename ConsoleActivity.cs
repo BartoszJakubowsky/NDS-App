@@ -57,8 +57,8 @@ public class ConsoleActivity
     private static void whatKeyWasTyped(ConsoleKeyInfo typedKey, List<string> consoleChars, ref int cursorPosition, JsonSerializerClass deserialize)
     {
         //json file with history input
-        //string sourceFile = @"C:\Users\Nowe Jakubki\OneDrive\Pan_Programista\C#\# Projekty\Projekt NDS v2 - PC\NDS-App-v2\cos\savedHistory.json";
         string sourceFile = @"C:\Users\Nowe Jakubki\OneDrive\Pan_Programista\C#\# Projekty\Projekt NDS v2 - PC\NDS-App-v2\cos\savedHistory.json";
+        //string sourceFile = @"C:\Users\Nowe Jakubki\OneDrive\Pan_Programista\C#\# Projekty\Projekt NDS v2 - PC\NDS-App-v2\cos\savedHistory.json";
 
         JsonFile historyFiles = null;
         if (File.Exists(sourceFile))
@@ -264,9 +264,14 @@ public class ConsoleActivity
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //////////////////                          history     /////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //
+    //
+    //
+    //it checks typed input, matched to history, and shows the hints
     public static HistoryValid HistoryShower(List<string> consoleChars, JsonFile historyFiles, ConsoleKeyInfo consoleKey, ref int cursorPosition)
     {
         HistoryValid hisVal = new HistoryValid();
+
 
         if (historyFiles == null ^ consoleChars.Count == 0)
         {
@@ -277,14 +282,14 @@ public class ConsoleActivity
         hisVal.IsHistory = true;
         string[] typedStrings = CharListToStringArray(consoleChars);
         //final string
-        string finalHintsString = "";
+       
 
 
 
         //for posibble use in belowed function
         int cursorPosition2 = cursorPosition;
 
-        string showHistory()
+        void showHistory()
         {
 
             //variables needed for authints
@@ -307,24 +312,34 @@ public class ConsoleActivity
 
             //variable to cooperate autohints when spacebar is pressed
             int isSpaceBar = 0;
+            
+            //first string that shows rest of the freshed word
+            string firstHintString = "";
+
+            //all showed words
+            string allShowedHints = "";
 
             //
             //logic below
 
-            void deleteHints()
+            void deleteHints(string matchedString, string lastTypedWord)
             {
+
+                //jeżeli różnica jest 0 -> jest na końcu
+
+
+                //check the cursor position with right barier -> program will know how far get to delete hints
 
 
                 //minus one because I override last mached word
-                int howFarMoveCursor = finalHintsString.Length - 1;
-
+                int howFarMoveCursor = hisVal.MatchedHistory.Length;
                 //if I overwrite one char hint or there was any
                 if (howFarMoveCursor <= 0)
                     return;
-
                 Console.WriteLine();
                 Console.WriteLine("----------");
-                Console.WriteLine(finalHintsString);
+                Console.WriteLine(allShowedHints);
+                Console.WriteLine("----------");
                 Environment.Exit(0);
                 Console.CursorVisible = false;
                 Console.SetCursorPosition(Console.CursorLeft + howFarMoveCursor, Console.CursorTop);
@@ -341,16 +356,22 @@ public class ConsoleActivity
             for (int j = 0; j < historyFiles.HistoryInput[0].TypedInput.Count; j++)
             {
 
+
+                //start of hints program = clear all the hints that might be on screen
+
+
+
                 //type json Input to some variable
                 historyString = historyFiles.HistoryInput[0].TypedInput[j].Input;
 
 
                 //check what was typed, then add to it rest of the current json word
                 if (lastStringFromArray.Length <= historyString.Length)
+                {
                     //variable changes only for if statements, later it's changes again ti it's final purpouse
-                    finalHintsString = lastStringFromArray + historyString.Remove(0, lastTypedStringLength);
-                else
-                //if the word was longer, search for next one (meaby this one will fit)
+                    firstHintString = lastStringFromArray + historyString.Remove(0, lastTypedStringLength);
+                }
+                else //if the word was longer, search for next one (meaby this one will fit)
                 {
                     //if this is the last one word and it didn't matched, let it through the code to reach delete history method
                     if (j == historyFiles.HistoryInput[0].TypedInput.Count - 1)
@@ -358,38 +379,53 @@ public class ConsoleActivity
 
                         //add 1 to j to let know program that this is the last wor
                         j++;
-                        finalHintsString = "";
+                        firstHintString = "";
 
                     }
-                    else //next loop to find matched word
+                    //next loop to find matched word
+                    else
+                    {
                         continue;
+                    }
                 }
 
 
                 //if word didn't match or this is last word and it didn't match
                 //return empty string and false as history didn't match == not exist and erase previous history
-                if (finalHintsString != historyString ^ j == historyFiles.HistoryInput[0].TypedInput.Count)
+                if (firstHintString != historyString && j == historyFiles.HistoryInput[0].TypedInput.Count)
                 {
+                    //it won't have history -> flag false
                     hisVal.IsHistory = false;
-                    //deleteHints();
-
-                    return finalHintsString = "";
+                    deleteHints(firstHintString, lastStringFromArray);
+                    return;
+                }
+                else if(firstHintString != historyString)
+                {
+                    continue;
                 }
                 //simple else would fit but for now i'm goint to leave it (for luck :D)
                 else //if (finalHintsString == historyString)
                 {
                     //back to it's final look
                     //rest of hint string that matches witch typed string and json input string
-                    finalHintsString = historyString.Remove(0, lastTypedStringLength);
+                    firstHintString = historyString.Remove(0, lastTypedStringLength);
 
                     //start to show rest hints on console
                     Console.CursorVisible = false;
                     Console.ForegroundColor = ConsoleColor.DarkGray;
-                    Console.Write(finalHintsString);
+                    Console.Write(firstHintString);
 
                     for (int k = j + 1; k < historyFiles.HistoryInput[0].TypedInput.Count; k++)
                     {
-                        //this var is holding next json input string
+
+                        //it has history -> flag hange
+                        hisVal.IsHistory = true;
+                        //add first matched string hint to memory
+                        if (k == j + 1)
+                            hisVal.MatchedHistory += firstHintString;
+
+
+                        //this var changes to holder of the next json input string
                         historyString = historyFiles.HistoryInput[0].TypedInput[k].Input;
 
                         //to avoid moving hints after pressing space bar the firs one does not add " "
@@ -399,13 +435,15 @@ public class ConsoleActivity
                             {
                                 //add hint without space char
                                 Console.Write(historyString);
-                                allHistoryStringsLength += historyString.Length;
+                                hisVal.MatchedHistory += historyString;
+                                //allHistoryStringsLength += historyString.Length;
                                 isSpaceBar++;
                             }
                             else //DRY cryies when sees it :D
                             {
                                 Console.Write(" " + historyString);
-                                allHistoryStringsLength += historyString.Length + 1;
+                                hisVal.MatchedHistory += " " + historyString;
+                                //allHistoryStringsLength += historyString.Length + 1;
                             }
 
                         }
@@ -413,29 +451,29 @@ public class ConsoleActivity
                         else
                         {
                             Console.Write(" " + historyString);
-                            allHistoryStringsLength += historyString.Length + 1;
+                            hisVal.MatchedHistory += " " + historyString;
+                            //allHistoryStringsLength += historyString.Length + 1;
                         }
+
+                       
                     }
 
                     //cursor back to normal visible + normal position
                     Console.CursorVisible = false;
-                    Console.SetCursorPosition(Console.CursorLeft - finalHintsString.Length - allHistoryStringsLength, Console.CursorTop);
+                    Console.SetCursorPosition(Console.CursorLeft - hisVal.MatchedHistory.Length, Console.CursorTop);
+                    //Console.SetCursorPosition(Console.CursorLeft - firstHintString.Length - allHistoryStringsLength, Console.CursorTop);
                     Console.ResetColor();
                     Console.CursorVisible = true;
 
-                    //history string changes to string container for showed hinst
-                    finalHintsString = historyString + finalHintsString;
-
-                    hisVal.IsHistory = true;
-                    return finalHintsString;
+                    return;
 
                 }
 
             }
+
+
             //code should never reach this line
             Console.WriteLine("something is broken with historyString");
-            Console.WriteLine();
-            return finalHintsString = "";
 
         }
 
@@ -457,17 +495,17 @@ public class ConsoleActivity
 
 
         //}
+
+
+
         if (consoleKey.Key == ConsoleKey.Backspace ^ consoleKey.Key == ConsoleKey.Delete)
         {
-            finalHintsString = showHistory();
+            showHistory();
         }
         else
         {
-
-            finalHintsString = showHistory();
+            showHistory();
         }
-
-        hisVal.MatchedHistory = finalHintsString;
         return hisVal;
 
 
