@@ -7,8 +7,10 @@ public class JsonSerializerClass
     {
 	}
 	
-
-	public string CurrentDirectory = @"C:\Users\Nowe Jakubki\OneDrive\Pan_Programista\C#\# Projekty\Projekt NDS v2 - PC\NDS-App-v2\cos";
+	//pc
+	//public string CurrentDirectory = @"C:\Users\Nowe Jakubki\OneDrive\Pan_Programista\C#\# Projekty\Projekt NDS v2 - PC\NDS-App-v2\cos";
+	//laptop
+	public string CurrentDirectory = @"C:\Users\barto\OneDrive\Pan_Programista\C#\# Projekty\Projekt NDS v2\cos";
 
 	public string jsonData = "savedHistory";
 

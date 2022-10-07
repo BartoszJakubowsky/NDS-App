@@ -23,18 +23,11 @@ class Program
     {
         Menu();
         string[] test = ConsoleActivity.TypedCharsToConsole();
-        string elo = "";
 
-        foreach(string x in test)
-        {
-            elo += x;
-        }
-
-
-        Console.WriteLine($"\n--------\n{elo}\n---------\n");
+        //old system
+        //string[] choice = InOut.ConsoleReadKey();
+        //CommandSender(choice);
         MainProgram();
-        string[] choice = InOut.ConsoleReadKey();
-        CommandSender(choice);
 
         
 

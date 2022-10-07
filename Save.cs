@@ -15,6 +15,9 @@ public class Save : JsonSerializerClass
 
         void createJsonFile()
         {
+
+
+            Directory.CreateDirectory(CurrentDirectory);
             newJsonData = new JsonFile()
             {
                 HistoryInput = new List<JsonCommandsHistory>()

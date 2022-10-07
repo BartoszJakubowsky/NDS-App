@@ -57,6 +57,7 @@ public class ConsoleActivity
     private static void whatKeyWasTyped(ConsoleKeyInfo typedKey, List<string> consoleChars, ref int cursorPosition, JsonSerializerClass deserialize)
     {
         //json file with history input
+        //string sourceFile = @"C:\Users\Nowe Jakubki\OneDrive\Pan_Programista\C#\# Projekty\Projekt NDS v2 - PC\NDS-App-v2\cos\savedHistory.json";
         string sourceFile = @"C:\Users\Nowe Jakubki\OneDrive\Pan_Programista\C#\# Projekty\Projekt NDS v2 - PC\NDS-App-v2\cos\savedHistory.json";
 
         JsonFile historyFiles = null;
@@ -354,18 +355,14 @@ public class ConsoleActivity
                     //if this is the last one word and it didn't matched, let it through the code to reach delete history method
                     if (j == historyFiles.HistoryInput[0].TypedInput.Count - 1)
                     {
-                        /////////////////////////////////////////////////////////////////////////
-                        //////////////// FIX HERE //////////////////////////////////////////////
-                        ///////////////////////////////////////////////////////////////////////
-                        ///
 
                         //add 1 to j to let know program that this is the last wor
                         j++;
                         finalHintsString = "";
-                        continue;
+
                     }
                     else //next loop to find matched word
-                        break;
+                        continue;
                 }
 
 
@@ -374,7 +371,7 @@ public class ConsoleActivity
                 if (finalHintsString != historyString ^ j == historyFiles.HistoryInput[0].TypedInput.Count)
                 {
                     hisVal.IsHistory = false;
-                    deleteHints();
+                    //deleteHints();
 
                     return finalHintsString = "";
                 }

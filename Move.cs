@@ -49,14 +49,19 @@ public class MoveFilesClass : Save
 
             if (commands.Length >= 3)
             {
-                commands[1] = @"C:\Users\Nowe Jakubki\Pictures\Próba";
+                //PC
+                //commands[1] = @"C:\Users\Nowe Jakubki\Pictures\Próba";
+                //Laptop
+                commands[1] = @"C:\Users\barto\documents\source_temp";
                 filePath = commands[1];
             }
 
             if (commands.Length >= 3)
             {
-
-                commands[2] = @"C:\Users\Nowe Jakubki\Pictures\docelowe\czy stworzy";
+                //PC
+                //commands[2] = @"C:\Users\Nowe Jakubki\Pictures\docelowe\czy stworzy";
+                //Laptop
+                commands[2] = @"C:\Users\Nowe Jakubki\documents\docelowe\target_temp";
                 finalFilePath = commands[2];
             }
             return true;
