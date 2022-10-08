@@ -29,7 +29,7 @@ public class InOut
         {
             key = Console.ReadKey(true);
 
-            if (key.Key == ConsoleKey.LeftArrow ^ key.Key == ConsoleKey.RightArrow)
+            if (key.Key == ConsoleKey.LeftArrow || key.Key == ConsoleKey.RightArrow)
             {
               
 

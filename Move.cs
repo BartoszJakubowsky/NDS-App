@@ -214,7 +214,7 @@ public class MoveFilesClass : Save
 
             if (whatToMove != "")
             {
-                if (whatToMove == "file" ^ whatToMove == "files")
+                if (whatToMove == "file" || whatToMove == "files")
                 {
 
 
@@ -242,7 +242,7 @@ public class MoveFilesClass : Save
 
                     }
                 }
-                else if (whatToMove == "directory" ^ whatToMove == "dir" ^ whatToMove == "folder" ^ whatToMove == "folders")
+                else if (whatToMove == "directory" || whatToMove == "dir" || whatToMove == "folder" || whatToMove == "folders")
                 {
                     filesArr = Directory.GetDirectories(filePath);
                     for (int i = 0; i < filesArr.Length; i++)
@@ -276,13 +276,13 @@ public class MoveFilesClass : Save
                 {
                     string fileName = Path.GetFileName(filesArr[i]);
 
-                    if (Directory.Exists($@"{finalFilePath}\{fileName}")  ^ File.Exists($@"{finalFilePath}\{fileName}"))
+                    if (Directory.Exists($@"{finalFilePath}\{fileName}") || File.Exists($@"{finalFilePath}\{fileName}"))
                     {
                         int j = 0;
                         do
                         {
                             j++;
-                        } while (Directory.Exists($@"{finalFilePath}\{fileName} ({j})") ^ File.Exists($@"{finalFilePath}\{fileName} ({j})"));
+                        } while (Directory.Exists($@"{finalFilePath}\{fileName} ({j})") || File.Exists($@"{finalFilePath}\{fileName} ({j})"));
                         Directory.Move(filesArr[i], $@"{finalFilePath}\{fileName} ({j})");
                     }
                     else

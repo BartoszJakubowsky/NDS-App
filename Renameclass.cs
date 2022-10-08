@@ -19,7 +19,7 @@ public class RenameClass : Save
         {
             if (command.Contains("--"))
             {
-                if (command == "--name" ^ command == "howrename")
+                if (command == "--name" || command == "howrename")
                 {
                     howToRename = commands[index + 1];
                 }
@@ -140,7 +140,7 @@ public class RenameClass : Save
 
             if (whatToRename != "")
             {
-                if (whatToRename == "file" ^ whatToRename == "files")
+                if (whatToRename == "file" || whatToRename == "files")
                 {
 
 
@@ -167,7 +167,7 @@ public class RenameClass : Save
 
                     }
                 }
-                else if (whatToRename == "directory" ^ whatToRename == "dir" ^ whatToRename == "folder" ^ whatToRename == "folders")
+                else if (whatToRename == "directory" || whatToRename == "dir" || whatToRename == "folder" || whatToRename == "folders")
                 {
                     filesArr = Directory.GetDirectories(finalFilePath);
 
@@ -201,13 +201,13 @@ public class RenameClass : Save
                 {
 
 
-                    if (Directory.Exists($@"{finalFilePath}\{fileName}") ^ File.Exists($@"{finalFilePath}\{fileName}"))
+                    if (Directory.Exists($@"{finalFilePath}\{fileName}") || File.Exists($@"{finalFilePath}\{fileName}"))
                     {
                         int j = 0;
                         do
                         {
                             j++;
-                        } while (Directory.Exists($@"{finalFilePath}\{fileName} ({j})") ^ File.Exists($@"{finalFilePath}\{fileName} ({j})"));
+                        } while (Directory.Exists($@"{finalFilePath}\{fileName} ({j})") || File.Exists($@"{finalFilePath}\{fileName} ({j})"));
                         Directory.Move(filesArr[i], $@"{finalFilePath}\{fileName} ({j})");
                     }
                     else
@@ -224,7 +224,7 @@ public class RenameClass : Save
 
             List<string[]> tempSubFolders = new List<string[]>();
 
-            if (subFolders == "" ^ subFolders == "no")
+            if (subFolders == "" || subFolders == "no")
                 return Directory.GetFileSystemEntries(finalFilePath, "*", SearchOption.TopDirectoryOnly);
             else
                 return Directory.GetFileSystemEntries(finalFilePath, "*", SearchOption.AllDirectories);
