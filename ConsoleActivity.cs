@@ -47,7 +47,7 @@ public class ConsoleActivity
         //setting previousCursorPosition
         HistoryValid hisVal = new HistoryValid();
 
-        
+
 
         do
         {
@@ -87,7 +87,7 @@ public class ConsoleActivity
             //commandsLength for right barirer for cursor
             //historyValid.IsHistory true/false for extend right barier
 
-            cursorPosition = moveCursor(typedKey, ref cursorPosition, commandsLength, historyValid);
+            cursorPosition = moveCursor(typedKey, ref cursorPosition, commandsLength, historyValid, ref previousCursorPosition);
 
         }
         else if (typedKey.Key == ConsoleKey.Tab)
@@ -97,25 +97,20 @@ public class ConsoleActivity
         else if (typedKey.Key == ConsoleKey.Backspace || typedKey.Key == ConsoleKey.Delete)
         {
             Delete(typedKey, ref cursorPosition, commandsLength, consoleChars);
-
-            //historyValid -> shows if there is a history and shows displayed hints
             HistoryShower(consoleChars, historyFiles, typedKey, ref cursorPosition, ref previousCursorPosition, hisVal);
         }
         else
         {
-            Write(typedKey, consoleChars, ref cursorPosition);
-
+            Write(typedKey, consoleChars, ref cursorPosition, ref previousCursorPosition);
             HistoryShower(consoleChars, historyFiles, typedKey, ref cursorPosition, ref previousCursorPosition, hisVal);
-            //putted it here insted in Write to code less trasher
-
 
         }
 
     }
 
-    private static int moveCursor(ConsoleKeyInfo whatArrow, ref int cursorPosition, int rightCursorBarier, HistoryValid history)
+    private static int moveCursor(ConsoleKeyInfo whatArrow, ref int cursorPosition, int rightCursorBarier, HistoryValid history, ref int previousCursorPosition)
     {
-
+        previousCursorPosition = cursorPosition;
 
         if (whatArrow.Key == ConsoleKey.LeftArrow)
         {
@@ -165,13 +160,59 @@ public class ConsoleActivity
     }
 
 
-    private static void Write(ConsoleKeyInfo typedChar, List<string> consoleChars, ref int cursorPosition)
+    private static void Write(ConsoleKeyInfo typedChar, List<string> consoleChars, ref int cursorPosition, ref int previousCursorPosition)
     {
-        char addChar = typedChar.KeyChar;
-        Console.Write(addChar);
 
-        consoleChars.Add(addChar.ToString());
-        cursorPosition = cursorPosition + 1;
+
+        previousCursorPosition = cursorPosition;
+        char addChar = typedChar.KeyChar;
+        //if new char is typed after all others before
+        if (cursorPosition == consoleChars.Count)
+        {
+            Console.Write(addChar);
+            consoleChars.Add(addChar.ToString());
+            cursorPosition += 1;
+        }
+        else //if (cursorPosition < consoleChars.Count)
+        {
+
+            List<string> temp = new List<string>();
+
+            for (int i = cursorPosition; i <= consoleChars.Count; i++)
+            {
+                if (i == cursorPosition)
+                {
+                    temp.Add(consoleChars[i]);
+                    consoleChars[i] = addChar.ToString();
+                }
+                else if (i == consoleChars.Count)
+                {
+                    consoleChars.Add(temp.Last());
+                    break;
+                } 
+                else
+                {
+                    temp.Add(consoleChars[i]);
+                    consoleChars[i] = temp.First();
+                    temp.RemoveAt(0);
+                }
+            }
+
+
+            Console.CursorVisible = false;
+            for (int i = cursorPosition; i < consoleChars.Count; i++)
+            {
+                Console.Write(consoleChars[i]);
+            }
+            Console.SetCursorPosition(Console.CursorLeft - (consoleChars.Count - cursorPosition), Console.CursorTop);
+            Console.CursorVisible = true;
+            cursorPosition = cursorPosition + 1;
+        }
+        
+        
+
+       
+        
 
     }
 
@@ -286,7 +327,7 @@ public class ConsoleActivity
         }
         string[] typedStrings = CharListToStringArray(consoleChars);
         //final string
-       
+
 
 
 
@@ -318,12 +359,10 @@ public class ConsoleActivity
 
             //variable to cooperate autohints when spacebar is pressed
             int isSpaceBar = 0;
-            
+
             //first string that shows rest of the freshed word
             string firstHintString = "";
 
-
-            //
             // those are special -> they are mainly use in deleteHints func, also at the end of adding hints to move cursor back where it was
             //
             //right barier for cursor
@@ -343,12 +382,14 @@ public class ConsoleActivity
 
                 //to put cursor at the end of hints string
                 int hintsLength = hisVal.MatchedHistory.Length;
-                
+
                 //erase hints loop
                 void eraseHints()
                 {
-                    
+
                     Console.CursorVisible = false;
+
+
                     Console.SetCursorPosition(Console.CursorLeft + howFarMoveCursor + hintsLength, Console.CursorTop);
                     for (int i = 0; i < hintsLength; i++)
                     {
@@ -360,6 +401,11 @@ public class ConsoleActivity
                 }
 
                 //bigger == last typed word has taken first char of hint string -> -1 to move cursor
+
+                //if (lastStringFromArray.Length == 0)
+                //{
+                //    eraseHints();
+                //}
                 if (_cursorPosition > _previousCursorPosition)
                 {
                     hintsLength -= 1;
@@ -386,10 +432,15 @@ public class ConsoleActivity
             for (int j = 0; j < historyFiles.HistoryInput[0].TypedInput.Count; j++)
             {
 
+
+
                 //start of hints program = clear all the hints that might be on screen
-                if (j == 0)
+                if (j == 0 && hisVal.IsHistory == true)
                     deleteHints();
-                    
+
+                //if there is no input 
+                if (lastStringFromArray.Length == 0)
+                    return;
 
 
 
@@ -421,9 +472,9 @@ public class ConsoleActivity
                 }
                 else //if the word was longer, search for next one (meaby this one will fit)
                 {
-                   //next loop to find matched word
-                   continue;
-                    
+                    //next loop to find matched word
+                    continue;
+
                 }
 
 
@@ -440,7 +491,7 @@ public class ConsoleActivity
                     hisVal.MatchedHistory = "";
                     return;
                 }
-                else if(firstHintString != historyString)
+                else if (firstHintString != historyString)
                 {
                     continue;
                 }
@@ -457,17 +508,17 @@ public class ConsoleActivity
                     firstHintString = historyString.Remove(0, lastTypedStringLength);
 
                     //start to show rest hints on console
-                        //to avoid strange cursor behavior
-                        Console.CursorVisible = false;
+                    //to avoid strange cursor behavior
+                    Console.CursorVisible = false;
 
-                        //to put cursor at the end of typed string from it's current position
-                        Console.SetCursorPosition(Console.CursorLeft + howFarMoveCursor, Console.CursorTop);
-                        
-                        //to show hints in darker color
-                        Console.ForegroundColor = ConsoleColor.DarkGray;
-                        
-                        //show first hint right next to one that matches
-                        Console.Write(firstHintString);
+                    //to put cursor at the end of typed string from it's current position
+                    Console.SetCursorPosition(Console.CursorLeft + howFarMoveCursor, Console.CursorTop);
+
+                    //to show hints in darker color
+                    Console.ForegroundColor = ConsoleColor.DarkGray;
+
+                    //show first hint right next to one that matches
+                    Console.Write(firstHintString);
 
                     hisVal.IsHistory = true;
                     hisVal.MatchedHistory += firstHintString;
@@ -480,7 +531,7 @@ public class ConsoleActivity
                         historyString = historyFiles.HistoryInput[0].TypedInput[k].Input;
 
                         //to avoid moving hints after pressing space bar the firs one does not add " "
-                        if (consoleKey.Key == ConsoleKey.Spacebar)
+                        if (consoleChars.Last() == " ")
                         {
                             if (isSpaceBar == 0)
                             {
@@ -505,7 +556,7 @@ public class ConsoleActivity
                     }
 
                     //cursor back to normal visible + normal position
-                    Console.SetCursorPosition(Console.CursorLeft - hisVal.MatchedHistory.Length, Console.CursorTop);
+                    Console.SetCursorPosition(Console.CursorLeft - howFarMoveCursor - hisVal.MatchedHistory.Length, Console.CursorTop);
                     Console.ResetColor();
                     Console.CursorVisible = true;
                     return;
