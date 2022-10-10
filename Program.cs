@@ -25,6 +25,17 @@ class Program
         Menu();
         string[] test = ConsoleActivity.TypedCharsToConsole();
 
+
+        Console.WriteLine();
+        Console.WriteLine("You typed ");
+        foreach (var item in test)
+        {
+            Console.Write(item);
+        }
+        Console.WriteLine();
+        
+
+        
         //old system
         //string[] choice = InOut.ConsoleReadKey();
         //CommandSender(choice);

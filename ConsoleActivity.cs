@@ -55,10 +55,15 @@ public class ConsoleActivity
         do
         {
             key = Console.ReadKey(true);
-            whatKeyWasTyped(key, consoleChars, ref cursorPosition, deserialize, hisVal, ref previousCursorPosition, ref lastTypedStringLength);
+
+            if(key.Key != ConsoleKey.Enter)
+                whatKeyWasTyped(key, consoleChars, ref cursorPosition, deserialize, hisVal, ref previousCursorPosition, ref lastTypedStringLength);
 
 
         } while (key.Key != ConsoleKey.Enter);
+
+        //add here erase all typed line
+
 
         return consoleChars.ToArray();
 
@@ -168,14 +173,18 @@ public class ConsoleActivity
 
         lastTypedStringLength = consoleChars.Count;
         previousCursorPosition = cursorPosition;
+
         char addChar = typedChar.KeyChar;
         //if new char is typed after all others before
         if (cursorPosition == consoleChars.Count)
         {
             Console.Write(addChar);
             consoleChars.Add(addChar.ToString());
+            cursorPosition += 1;
+
         }
         else //if (cursorPosition < consoleChars.Count)
+        
         {
 
             List<string> temp = new List<string>();
@@ -191,7 +200,7 @@ public class ConsoleActivity
                 {
                     consoleChars.Add(temp.Last());
                     break;
-                } 
+                }
                 else
                 {
                     temp.Add(consoleChars[i]);
@@ -200,17 +209,19 @@ public class ConsoleActivity
                 }
             }
 
-
             Console.CursorVisible = false;
             for (int i = cursorPosition; i < consoleChars.Count; i++)
             {
                 Console.Write(consoleChars[i]);
             }
-            Console.SetCursorPosition(Console.CursorLeft - (consoleChars.Count - cursorPosition), Console.CursorTop);
+            cursorPosition += 1;
+            int howFarMoveCursor = consoleChars.Count - cursorPosition;
+            Console.SetCursorPosition(Console.CursorLeft  - howFarMoveCursor, Console.CursorTop);
             Console.CursorVisible = true;
+            
+
         }
-        
-        cursorPosition += 1;
+
 
     }
 
