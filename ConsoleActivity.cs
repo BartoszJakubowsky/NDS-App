@@ -47,12 +47,15 @@ public class ConsoleActivity
         //setting previousCursorPosition
         HistoryValid hisVal = new HistoryValid();
 
+        //for delete hints prpuse
+        int lastTypedStringLength = 0;
+
 
 
         do
         {
             key = Console.ReadKey(true);
-            whatKeyWasTyped(key, consoleChars, ref cursorPosition, deserialize, hisVal, ref previousCursorPosition);
+            whatKeyWasTyped(key, consoleChars, ref cursorPosition, deserialize, hisVal, ref previousCursorPosition, ref lastTypedStringLength);
 
 
         } while (key.Key != ConsoleKey.Enter);
@@ -62,14 +65,14 @@ public class ConsoleActivity
 
     }
 
-    private static void whatKeyWasTyped(ConsoleKeyInfo typedKey, List<string> consoleChars, ref int cursorPosition, JsonSerializerClass deserialize, HistoryValid hisVal, ref int previousCursorPosition)
+    private static void whatKeyWasTyped(ConsoleKeyInfo typedKey, List<string> consoleChars, ref int cursorPosition, 
+        JsonSerializerClass deserialize, HistoryValid hisVal, ref int previousCursorPosition, ref int lastTypedStringLength)
     {
-        //json file with history input
-        string sourceFile = @"C:\Users\Nowe Jakubki\OneDrive\Pan_Programista\C#\# Projekty\Projekt NDS v2 - PC\NDS-App-v2\cos\savedHistory.json";
-        //string sourceFile = @"C:\Users\Nowe Jakubki\OneDrive\Pan_Programista\C#\# Projekty\Projekt NDS v2 - PC\NDS-App-v2\cos\savedHistory.json";
+        string sourceFile = @$"{Directory.GetCurrentDirectory()}\cos\savedHistory.json";
+
 
         JsonFile historyFiles = null;
-        if (File.Exists(sourceFile))
+        if (File.Exists(sourceFile))    
         {
             historyFiles = deserialize.JsonDeserialized();
         }
@@ -96,13 +99,13 @@ public class ConsoleActivity
         }
         else if (typedKey.Key == ConsoleKey.Backspace || typedKey.Key == ConsoleKey.Delete)
         {
-            Delete(typedKey, ref cursorPosition, commandsLength, consoleChars);
-            HistoryShower(consoleChars, historyFiles, typedKey, ref cursorPosition, ref previousCursorPosition, hisVal);
+            Delete(typedKey, ref cursorPosition, commandsLength, consoleChars, ref lastTypedStringLength);
+            HistoryShower(consoleChars, historyFiles, typedKey, ref cursorPosition, ref previousCursorPosition, hisVal, ref lastTypedStringLength);
         }
         else
         {
-            Write(typedKey, consoleChars, ref cursorPosition, ref previousCursorPosition);
-            HistoryShower(consoleChars, historyFiles, typedKey, ref cursorPosition, ref previousCursorPosition, hisVal);
+            Write(typedKey, consoleChars, ref cursorPosition, ref previousCursorPosition, ref lastTypedStringLength);
+            HistoryShower(consoleChars, historyFiles, typedKey, ref cursorPosition, ref previousCursorPosition, hisVal,ref lastTypedStringLength);
 
         }
 
@@ -129,7 +132,7 @@ public class ConsoleActivity
                 //check if there is historyShower
                 if (history.IsHistory == true)
                 {
-
+                    //go on
                 }
                 else
                     return cursorPosition;
@@ -160,10 +163,10 @@ public class ConsoleActivity
     }
 
 
-    private static void Write(ConsoleKeyInfo typedChar, List<string> consoleChars, ref int cursorPosition, ref int previousCursorPosition)
+    private static void Write(ConsoleKeyInfo typedChar, List<string> consoleChars, ref int cursorPosition, ref int previousCursorPosition, ref int lastTypedStringLength)
     {
 
-
+        lastTypedStringLength = consoleChars.Count;
         previousCursorPosition = cursorPosition;
         char addChar = typedChar.KeyChar;
         //if new char is typed after all others before
@@ -171,7 +174,6 @@ public class ConsoleActivity
         {
             Console.Write(addChar);
             consoleChars.Add(addChar.ToString());
-            cursorPosition += 1;
         }
         else //if (cursorPosition < consoleChars.Count)
         {
@@ -206,17 +208,13 @@ public class ConsoleActivity
             }
             Console.SetCursorPosition(Console.CursorLeft - (consoleChars.Count - cursorPosition), Console.CursorTop);
             Console.CursorVisible = true;
-            cursorPosition = cursorPosition + 1;
         }
         
-        
-
-       
-        
+        cursorPosition += 1;
 
     }
 
-    private static void Delete(ConsoleKeyInfo remove, ref int cursorPosition, int commandsLength, List<string> consoleChars)
+    private static void Delete(ConsoleKeyInfo remove, ref int cursorPosition, int commandsLength, List<string> consoleChars, ref int lastTypedStringLength)
     {
 
 
@@ -230,7 +228,7 @@ public class ConsoleActivity
             //remove char from list
             cursorPosition = cursorPosition - 1;
             consoleChars.RemoveAt(cursorPosition);
-
+            lastTypedStringLength -= 1;
 
             //remove char form console
             Console.CursorVisible = false;
@@ -317,7 +315,8 @@ public class ConsoleActivity
     //
     //
     //it checks typed input, matched to history, and shows the hints
-    public static void HistoryShower(List<string> consoleChars, JsonFile historyFiles, ConsoleKeyInfo consoleKey, ref int cursorPosition, ref int previousCursorPosition, HistoryValid hisVal)
+    public static void HistoryShower(List<string> consoleChars, JsonFile historyFiles, ConsoleKeyInfo consoleKey, ref int cursorPosition, 
+        ref int previousCursorPosition, HistoryValid hisVal, ref int lastTypedStringLength)
     {
         //check if history json exist
         if (historyFiles == null)
@@ -383,7 +382,8 @@ public class ConsoleActivity
                 //to put cursor at the end of hints string
                 int hintsLength = hisVal.MatchedHistory.Length;
 
-                //erase hints loop
+                //
+                //hints loop
                 void eraseHints()
                 {
 
@@ -396,7 +396,13 @@ public class ConsoleActivity
                         Console.Write("\b \b");
                     }
 
-                    Console.SetCursorPosition(Console.CursorLeft - howFarMoveCursor, Console.CursorTop);
+                    if(lastTypedStringLength == 0)
+                    {
+                        //go on
+                    }
+                    else
+                        Console.SetCursorPosition(Console.CursorLeft - howFarMoveCursor, Console.CursorTop);
+
                     Console.CursorVisible = true;
                 }
 
@@ -406,14 +412,14 @@ public class ConsoleActivity
                 //{
                 //    eraseHints();
                 //}
-                if (_cursorPosition > _previousCursorPosition)
+                if (consoleChars.Count > lastTypedStringLength)
                 {
                     hintsLength -= 1;
                     eraseHints();
 
                 }
                 //smaller == last typed word is smaller than previous one and didn't matched with hints -> + to move cursor
-                else if (_cursorPosition < _previousCursorPosition)
+                else if (consoleChars.Count == lastTypedStringLength)
                 {
                     hintsLength += 1;
                     eraseHints();

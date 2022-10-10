@@ -21,6 +21,7 @@ class Program
 
     public static void MainProgram()
     {
+
         Menu();
         string[] test = ConsoleActivity.TypedCharsToConsole();
 
