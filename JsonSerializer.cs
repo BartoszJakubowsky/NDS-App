@@ -7,7 +7,7 @@ public class JsonSerializerClass
     {
 	}
 
-	public string CurrentDirectory = @$"{Directory.GetCurrentDirectory()}\cos";
+	public string CurrentDirectory = @$"{Directory.GetCurrentDirectory()}\jsonFiles";
 
 	public string jsonData = "savedHistory";
 
