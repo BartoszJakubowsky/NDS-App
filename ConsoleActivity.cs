@@ -58,6 +58,9 @@ public class ConsoleActivity
 
             if (key.Key != ConsoleKey.Enter)
                 whatKeyWasTyped(key, consoleChars, ref cursorPosition, deserialize, hisVal, ref previousCursorPosition, ref previousTypedCommandsLength);
+                //in the future add here ctrl grabber (before whatKeyWasTyped)->
+                    //if next key will be A, C, V, F and etc. -> send it to functions below...
+
 
 
         } while (key.Key != ConsoleKey.Enter);
@@ -79,9 +82,6 @@ public class ConsoleActivity
         if (File.Exists(jsonHistorySourceFile))
             historyFiles = deserialize.JsonDeserialized();
 
-        HistoryValid historyValid = new HistoryValid();
-
-
         //right cursor barier
         int commandsLength = consoleChars.Count;
 
@@ -92,12 +92,12 @@ public class ConsoleActivity
             //commandsLength for right barirer for cursor
             //historyValid.IsHistory true/false for extend right barier
 
-            cursorPosition = moveCursor(typedKey, ref cursorPosition, commandsLength, historyValid, ref previousCursorPosition);
+            cursorPosition = moveCursor(typedKey, ref cursorPosition, commandsLength, ref previousCursorPosition);
 
         }
         else if (typedKey.Key == ConsoleKey.Tab)
         {
-            //AutoCompiler();
+            AutoCompiler(hisVal, typedKey, consoleChars, ref cursorPosition, ref previousCursorPosition);
         }
         else if (typedKey.Key == ConsoleKey.Backspace || typedKey.Key == ConsoleKey.Delete)
         {
@@ -113,7 +113,7 @@ public class ConsoleActivity
 
     }
 
-    private static int moveCursor(ConsoleKeyInfo whatArrow, ref int cursorPosition, int rightCursorBarier, HistoryValid history, ref int previousCursorPosition)
+    private static int moveCursor(ConsoleKeyInfo whatArrow, ref int cursorPosition, int rightCursorBarier, ref int previousCursorPosition)
     {
         previousCursorPosition = cursorPosition;
 
@@ -130,17 +130,9 @@ public class ConsoleActivity
         {
             //right barrier
             if (cursorPosition == rightCursorBarier)
-            {
-                //check if there is historyShower
-                if (history.IsHistory == true)
-                {
-                    //go on
-                }
-                else
                     return cursorPosition;
-            }
 
-            Console.SetCursorPosition(Console.GetCursorPosition().Left + 1, Console.GetCursorPosition().Top);
+            Console.SetCursorPosition(Console.CursorLeft + 1, Console.CursorTop);
             return cursorPosition + 1;
         }
         else if (whatArrow.Key == ConsoleKey.Home)
@@ -149,7 +141,7 @@ public class ConsoleActivity
             if (cursorPosition == 0)
                 return cursorPosition;
 
-            Console.SetCursorPosition(Console.CursorLeft - rightCursorBarier, Console.CursorTop); ;
+            Console.SetCursorPosition(Console.CursorLeft - cursorPosition, Console.CursorTop); ;
             return cursorPosition = 0;
         }
         else //for end
@@ -158,7 +150,7 @@ public class ConsoleActivity
             if (cursorPosition == rightCursorBarier)
                 return cursorPosition;
 
-            Console.SetCursorPosition(Console.GetCursorPosition().Left + rightCursorBarier, Console.GetCursorPosition().Top);
+            Console.SetCursorPosition(Console.CursorLeft + (rightCursorBarier - cursorPosition), Console.CursorTop);
             return cursorPosition = rightCursorBarier;
         }
 
@@ -319,9 +311,42 @@ public class ConsoleActivity
 
     }
 
-    private static void AutoCompiler()
+    private static void AutoCompiler(HistoryValid history, ConsoleKeyInfo consoleKey, List<string> consoleChars, ref int cursorPosition, ref int previousCursorPosition )
     {
-        //...
+        //if there is no history 
+        if (history.IsHistory == false)
+            return;
+
+        Console.CursorVisible = false;
+
+        if (consoleKey.Key == ConsoleKey.Tab)
+        {
+            //set new previousCursorPosition
+            previousCursorPosition = cursorPosition;
+
+            //set cursor at the end of actual commands length
+            Console.SetCursorPosition(Console.CursorLeft + (consoleChars.Count - cursorPosition), Console.CursorTop);
+
+            //add hitns to string list and show them at the screen
+            for (int i = 0; i < history.MatchedHistory.Length; i++)
+            {
+                string element = history.MatchedHistory.ElementAt(i).ToString();
+                Console.Write(element);
+                consoleChars.Add(element);
+            }
+
+            //set new cursor position at the end of all commands
+            cursorPosition = consoleChars.Count;
+
+            //now history does not match anymore
+            history.IsHistory = false;
+            history.MatchedHistory = "";
+
+        }
+        //else if ctrl + f (future)
+
+        Console.CursorVisible = true;
+
     }
 
 
@@ -402,10 +427,7 @@ public class ConsoleActivity
                 if (hintsLength == 0)
                     return;
 
-                //albo usunęliśmy
-                //usuń to co wcześniej ale przesuń o kursor więcej
-                //albo dodaliśmy
-                //usuń to co wcześniej ale o przesuń kursor o jeden mniej
+               
 
                 void eraseHints()
                 {
@@ -433,7 +455,7 @@ public class ConsoleActivity
                 }
                 else
                 {
-                    //hintsLength -= 1;
+                    
                     eraseHints();
                 }
             }
