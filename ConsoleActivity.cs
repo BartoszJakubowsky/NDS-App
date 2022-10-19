@@ -1,12 +1,6 @@
 ﻿using System;
 
-// MOJE PRZEMYŚLENIA 
-//jeżeli już się nie maczuje, musi usunąć resztę -> gdzieś musi to zapisywać
-//wtedy usuwa od momentu ostatni maczujący + 1 (bo dzięki temu ostatniemu się nie maczowało)
-//do zmiany last typedWord->musi validować cały input bo jak coś zmienię na początku to już nie będzie takie samo
-//możliwe, że mogę to zaimplementować osobno dla strzałek i delete -> bo tylko tam może taka sytuacja wystąpić
-//
-//do dodania nie zwracanie uwagi na wielkość liter
+
 
 public class HistoryValid
 {
