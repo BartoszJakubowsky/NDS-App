@@ -1,9 +1,23 @@
 ﻿using System;
 
-public class CopyFileClass : Save
+public class CopyFileClass : Save, IPathSearcher
 {
-    public CopyFileClass() :base("CopyData")
+    public CopyFileClass(string[] commands) :base("CopyData")
     {
+        void replaceStrings(string[] pathNames)
+        {
+            for (int i = 0; i < pathNames.Length; i++)
+            {
+                commands[i+1] = pathNames[i];
+            }
+        }
+
+        if (commands.Length >= 3)
+            replaceStrings(IPathSearcher.SearchForPath(commands[1], commands[2]));
+        else if (commands.Length >= 2)
+            replaceStrings(IPathSearcher.SearchForPath(commands[1]));
+        else
+            IPathSearcher.SearchForPath();
     }
 
 
@@ -39,6 +53,7 @@ public class CopyFileClass : Save
 
             if (commands.Length >= 3)
             {
+
                 commands[1] = @"C:\Users\Nowe Jakubki\Pictures\Próba";
                 filePath = commands[1];
             }

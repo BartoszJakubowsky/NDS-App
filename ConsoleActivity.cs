@@ -62,7 +62,7 @@ public class ConsoleActivity
         //add here erase all typed line
 
 
-        return consoleChars.ToArray();
+        return CharListToStringArray(consoleChars);
 
 
     }
@@ -371,6 +371,7 @@ public class ConsoleActivity
                 typedStrings += consoleChars[i];
             }
         }
+
 
         //for (int i = 0; i < typedStringsArray.Length; i++)
         //{

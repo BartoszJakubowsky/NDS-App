@@ -23,22 +23,10 @@ class Program
     {
 
         Menu();
-        string[] test = ConsoleActivity.TypedCharsToConsole();
+        string[] commands = ConsoleActivity.TypedCharsToConsole();
 
 
-        Console.WriteLine();
-        Console.WriteLine("You typed ");
-        foreach (var item in test)
-        {
-            Console.Write(item);
-        }
-        Console.WriteLine();
-        
-
-        
-        //old system
-        //string[] choice = InOut.ConsoleReadKey();
-        //CommandSender(choice);
+        CommandSender(commands);
         MainProgram();
 
         
@@ -138,8 +126,7 @@ class Program
             {
                 if (toDo == "-move")
                 {
-                    MoveFilesClass moveFiles = new MoveFilesClass();
-                    moveFiles.Init(commands);
+                    MoveFilesClass moveFiles = new MoveFilesClass(commands);
                     moveFiles.SaveInput(commands);
                 }
                 else if (toDo == "-help")
